@@ -64,7 +64,7 @@ public class BoatFactData extends MutableNewsExtractedData{
     }
 
     public String getArrivalHarbor() {
-        return get("ship_arrival");
+        return get("ship_arrival_port");
     }
 
     public boolean hasPortOfCalls(){

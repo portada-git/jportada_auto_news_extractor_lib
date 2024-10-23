@@ -29,7 +29,7 @@ public class PortOfCallsFromOriginPortCalculator extends AbstractCalculator<Stri
         String origen;
         StringBuilder portOfCalls=new StringBuilder();
         String originField = params[ORIGIN].replace('\n', ' ');
-        String[] values = extractedData.get(originField).split("[;,yv]");
+        String[] values = extractedData.get(originField).split("\\s[;,yv]\\s");
         origen = values[0];
         String sep = "";
         for(int i=1; i<values.length; i++){
