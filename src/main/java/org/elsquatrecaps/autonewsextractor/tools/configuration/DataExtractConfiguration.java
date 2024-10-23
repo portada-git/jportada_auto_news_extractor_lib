@@ -14,11 +14,9 @@ public interface DataExtractConfiguration extends Configuration{
     String[] getDataExtractCalculatorBuilderPackagesToSearch();
 
     void setDataExtractCalculatorBuilderPackagesToSearch(String[] packages);
+        
+    String getParserConfigJsonFile();
     
-    String getJsonConfigFile();
+    void setParserConfigJsonFile(String parserConfigJsonFile);
 
-    void setJsonConfigFile(String file);
-    
-
-    //String getExtractorApproach();
 }

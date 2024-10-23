@@ -1,7 +1,5 @@
 package org.elsquatrecaps.autonewsextractor.tools.configuration;
 
-import org.elsquatrecaps.utilities.tools.configuration.Configuration;
-
 /**
  *
  * @author josep

@@ -209,6 +209,9 @@ public /*abstract*/ class GenericCsvFileFormatter<T extends MutableNewsExtracted
 
     @Override
     public void toFile(String outputFileName) {
+        if(!outputFileName.endsWith(".csv")){
+            outputFileName = outputFileName.concat(".csv");
+        }
         File f = new File(outputFileName);
         f.getParentFile().mkdirs();
         try(BufferedWriter fw = new BufferedWriter(new FileWriter(outputFileName, isAppendFile()))){

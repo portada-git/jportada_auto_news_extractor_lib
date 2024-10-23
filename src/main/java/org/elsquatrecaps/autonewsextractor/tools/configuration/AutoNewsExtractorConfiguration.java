@@ -1,13 +1,9 @@
-package org.elsquatrecaps.autonewsextractor.tools;
+package org.elsquatrecaps.autonewsextractor.tools.configuration;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.annotation.Arg;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
-import org.elsquatrecaps.autonewsextractor.tools.configuration.DataExtractConfiguration;
-import org.elsquatrecaps.autonewsextractor.tools.configuration.InformationUnitBuilderrConfiguration;
-import org.elsquatrecaps.autonewsextractor.tools.configuration.RegexConfiguration;
-import org.elsquatrecaps.autonewsextractor.tools.configuration.TargetFragmentBreakerConfiguration;
 import org.elsquatrecaps.utilities.tools.configuration.AbstractConfiguration;
 
 
@@ -20,6 +16,18 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
                                                                                     InformationUnitBuilderrConfiguration,
                                                                                     RegexConfiguration,
                                                                                     DataExtractConfiguration{
+    @Arg(dest="target_fragment_breaker_proxy_packages_to_search") //-tfb_pck
+    private String strTargetFragmentBreakerProxyPackagesToSearch;
+    private String[] targetFragmentBreakerProxyPackagesToSearch;
+    @Arg(dest="information_unit_builder_proxy_packages_to_search") //-iub_pck
+    private String strInformationUnitBuilderProxyPackagesToSearch;
+    private String[] informationUnitBuilderProxyPackagesToSearch;
+    @Arg(dest="data_extract_proxy_packages_to_search") //-dex_pck
+    private String strDataExtractProxyPackagesToSearch;
+    private String[] dataExtractProxyPackagesToSearch;
+    @Arg(dest="data_extract_calculator_builder_packages_to_search") //-decb_pck
+    private String strDataExtractCalculatorBuilderProxyPackagesToSearch;
+    private String[] dataExtractCalculatorBuilderProxyPackagesToSearch;
     @Arg                        //-r
     private String regexBasePath;
     @Arg(dest="fact_model")   //-f
@@ -40,28 +48,35 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     @Arg(dest="appendOutputFile")   //-a
     private String append_output_file;
     private boolean appendOutputFile;
-    @Arg(dest="parser_config_json_file")   //-pc
+    @Arg(dest="parser_config_json_file")   //-pcf
     private String parserConfigJsonFile;
-//    @Arg(dest="counter_file")  //-c
-//    private String counterFile;
-//    @Arg(dest="layoutStructureType")   //-s
-//    private String layoutStructureType;
-//    @Arg(dest="layoutColumnNumber")     //-cn
-//    private String s_layoutColumnNumber;
-//    private Integer[] layoutColumnNumber;
-//    @Arg(dest="layoutColumnPositions")    //-cc
-//    private String s_layoutColumnPositions;
-//    private Integer[][][] layoutColumnPositions;
-//    
+    @Arg(dest="fragment_breaker_approach")   //-fbapp
+    private String fragmentBreakerApproach;
+    @Arg(dest="extractor_approach")   //-exapp
+    private String extractorApproach;
+
     /**
      *
      * @param dest
      * @param val
      */
     @Override
-    protected void setDefaultArg(String dest, Object val){
+    protected boolean setDefaultArg(String dest, Object val){
+        boolean ret=true;
         if(!this.getAttrs().contains(dest)){
             switch(dest){
+                case "target_fragment_breaker_proxy_packages_to_search":
+                    this.setTargetfragmentBreakerProxyPackagesToSearch((String) val);
+                    break;
+                case "information_unit_builder_proxy_packages_to_search":
+                    this.setInformationUnitBuilderProxyPackagesToSearch((String) val);
+                    break;
+                case "data_extract_proxy_packages_to_search":
+                    this.setDataExtractProxyPackagesToSearch((String) val);
+                    break;
+                case "data_extract_calculator_builder_packages_to_search":
+                    this.setDataExtractCalculatorBuilderPackagesToSearch((String) val);
+                    break;
                 case "parser_config_json_file":
                     this.setParserConfigJsonFile((String) val);
                     break;
@@ -92,25 +107,20 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
                     appendOutputFile = getBoolean((String) val);
                     this.getAttrs().add(dest);
                     break;                    
-//                case "counter_file":
-//                    counterFile = (String) val;
-//                    this.getAttrs().add(dest);
-//                    break;                    
                 case "file_extension":
                     setFileExtension((String) val);
-//                    this.getAttrs().add(dest);
                     break;                    
-//                case "layoutStructureType":
-//                    setLayoutStructureType((String) val);
-//                    break;                    
-//                case "layoutColumnNumber":
-//                    setLayoutColumnNumber((String) val);
-//                    break;                    
-//                case "layoutColumnPositions":
-//                    setLayoutColumnPositions((String) val);
-//                    break;                    
+                case "fragment_breaker_approach":
+                    setFragmentBreakerApproach((String) val);
+                    break;                    
+                case "extractor_approach":
+                    setExtractorApproach((String) val);
+                    break;  
+                default:
+                    ret=false;
             }
         }
+        return ret;
     }
     
     @Override
@@ -118,6 +128,18 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         T ret = null;
         if(this.getAttrs().contains(key)){
             switch(key){
+                case "data_extract_calculator_builder_packages_to_search":
+                    ret = (T) this.getDataExtractCalculatorBuilderPackagesToSearch();
+                    break;
+                case "data_extract_proxy_packages_to_search":
+                    ret = (T) this.getDataExtractProxyPackagesToSearch();
+                    break;
+                case "information_unit_builder_proxy_packages_to_search":
+                    ret = (T) this.getInformationUnitBuilderProxyPackagesToSearch();
+                    break;
+                case "target_fragment_breaker_proxy_packages_to_search":
+                    ret = (T) this.getTargetfragmentBreakerProxyPackagesToSearch();
+                    break;
                 case "parser_config_json_file":
                     ret = (T) this.getParserConfigJsonFile();
                     break;
@@ -143,33 +165,21 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
                     ret = (T) getOutputFile();
                     break;
                 case "appendOutputFile":
-                    ret = (T) Boolean.valueOf(appendOutputFile);
+                    Boolean b = appendOutputFile;
+                    ret = (T) b;
                     break;                    
-//                case "counter_file":
-//                    counterFile = (String) val;
-//                    this.getAttrs().add(dest);
-//                    break;                    
                 case "file_extension":
                     ret = (T) getFileExtension();
-//                    this.getAttrs().add(dest);
                     break;                    
-//                case "layoutStructureType":
-//                    setLayoutStructureType((String) val);
-//                    break;                    
-//                case "layoutColumnNumber":
-//                    setLayoutColumnNumber((String) val);
-//                    break;                    
-//                case "layoutColumnPositions":
-//                    setLayoutColumnPositions((String) val);
-//                    break;                    
+                case "fragment_breaker_approach":
+                    ret = (T) getFragmentBreakerApproach();
+                    break;                    
+                case "extractor_approach":
+                    ret = (T) getExtractorApproach();
+                    break;                    
             }
         }
         return ret;
-    }
-    
-    @Override
-    public void configure(){
-        super.configure("appExtractor.properties");
     }
     
     @Override
@@ -180,23 +190,29 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         parser.addArgument("-d", "--origin_dir").nargs("?").help("Directori d'on llegir els fitxers OCR amb les noticies");
         parser.addArgument("-o", "--output_file").nargs("?").help("Camí al fitxer de sortida. Per exemple: -o c:/directori/non_fitxer");
         parser.addArgument("-a", "--appendOutputFile").nargs("?").help("Indica si es vol afegir els vaixells extrets al final del fitxer de sortida o es crea un nou fitxer a cada extracció. Nomes accepta els valors 'si' o el valor 'no'");
-//        parser.addArgument("-c", "--counter_file").nargs("?").help("Camí al fitxer comptador de vaixells. Per exemple: -c c:/directori/non_fitxer");
         parser.addArgument("-x", "--file_extension").nargs("?").help("Indica quina extyensió han de tenir els fitxers a llegir");
-//        parser.addArgument("-s", "--layoutStructureType").choices("columnPositions", "columnNumber", "free").nargs("?").help("Indica el tipus de decripció de l'estructura de la maquetació. Són valors vàlids: 'columnNumber', 'columnPositions' o 'free'");
-//        parser.addArgument("-cn", "--layoutColumnNumber").nargs("?").help("Indica quantes columnes i com es troben agrupades la publicació.");
-//        parser.addArgument("-cc", "--layoutColumnPositions").nargs("?").help("Indica la posició de les columnes sobre l'eix de les abscises i com es troben agrupades.");
         parser.addArgument("-r", "--regexBasePath").nargs("?").help("Directori on es troben especificades les expressions regulars de l'anàlisi");
         parser.addArgument("-f", "--fact_model").nargs("?").help("Indica quin tipus de fet s'ha de llegir");
         parser.addArgument("-n", "--newspaper").nargs("?").help("Indica quin model de nitícies cal tractar");
         parser.addArgument("-oe", "--ocr_engine_model").nargs("?").help("Indica quins models d'expressions regulars cal aplicar");
         parser.addArgument("-p", "--parse_model").nargs("?").help("Indica quins models d'analitzador (parser) cal usar");
-        parser.addArgument("-pc", "--parser_config_json_file").nargs("?").help("Indica quin es el fitxer de configuració del parser");
+        parser.addArgument("-pcf", "--parser_config_json_file").nargs("?").help("Indica quin es el fitxer de configuració del parser");
+        parser.addArgument("-tfb_pck", "--target_fragment_breaker_proxy_packages_to_search").nargs("?").help("Indica quin paquets de cerca pel proxy");
+        parser.addArgument("-iub_pck", "--information_unit_builder_proxy_packages_to_search").nargs("?").help("Indica quin paquets de cerca pel proxy");
+        parser.addArgument("-dex_pck", "--data_extract_proxy_packages_to_search").nargs("?").help("Indica quin paquets de cerca pel proxy");
+        parser.addArgument("-decb_pck", "--data_extract_calculator_builder_packages_to_search").nargs("?").help("Indica quin paquets de cerca pel proxy");
+        parser.addArgument("-fbapp", "--fragment_breaker_approach").nargs("?").help("Indica quin enfocament metodològic s'usa per separar els fragments útils");
+        parser.addArgument("-exapp", "--extractor_approach").nargs("?").help("Indica quin enfocament metodològic s'usa per a fer l'extracció");
         try {
             parser.parseArgs(args, this);
             this.appendOutputFile = getBoolean(this.append_output_file);
 //            this.layoutColumnNumber = getIntArray(this.s_layoutColumnNumber);
 //            this.layoutColumnPositions = getInt3dArray(this.s_layoutColumnPositions);
             this.parseModel = getStringArray(this.s_parseModel);
+            this.setTargetfragmentBreakerProxyPackagesToSearch(getStringArray(this.strTargetFragmentBreakerProxyPackagesToSearch));
+            this.setInformationUnitBuilderProxyPackagesToSearch(getStringArray(this.strInformationUnitBuilderProxyPackagesToSearch));
+            this.setDataExtractProxyPackagesToSearch(getStringArray(this.strDataExtractProxyPackagesToSearch));
+            this.setDataExtractCalculatorBuilderPackagesToSearch(getStringArray(this.strDataExtractCalculatorBuilderProxyPackagesToSearch));
             this.updateAttrs();
         } catch (ArgumentParserException e) {
             parser.handleError(e);
@@ -228,20 +244,6 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         if(this.append_output_file!=null){
             this.getAttrs().add("appendOutputFile");
         }
-//        if(this.layoutStructureType!=null){
-//            this.getAttrs().add("layoutStructureType");
-//        }
-//        if(this.s_layoutColumnNumber!=null){
-//            this.setLayoutStructureType("columnNumber");
-//            this.getAttrs().add("layoutColumnNumber");
-//        }
-//        if(this.s_layoutColumnPositions!=null){
-//            this.setLayoutStructureType("columnPositions");
-//            this.getAttrs().add("layoutColumnPositions");
-//        }
-//        if(this.counterFile!=null){
-//            this.getAttrs().add("counter_file");
-//        }
         if(this.originDir!=null){
             this.getAttrs().add("origin_dir");
         }
@@ -250,6 +252,21 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         }
         if(this.getFileExtension()!=null){
             this.getAttrs().add("file_extension");
+        }
+        if(this.getTargetfragmentBreakerProxyPackagesToSearch()!=null){
+            this.getAttrs().add("target_fragment_breaker_proxy_packages_to_search");
+        }
+        if(this.getInformationUnitBuilderProxyPackagesToSearch()!=null){
+            this.getAttrs().add("information_unit_builder_proxy_packages_to_search");
+        }
+        if(this.getDataExtractProxyPackagesToSearch()!=null){
+            this.getAttrs().add("data_extract_proxy_packages_to_search");
+        }
+        if(this.getFragmentBreakerApproach()!=null){
+            this.getAttrs().add("fragment_breaker_approach");
+        }
+        if(this.getExtractorApproach()!=null){
+            this.getAttrs().add("extractor_approach");
         }
     }
     
@@ -284,16 +301,6 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         return appendOutputFile;
     }
 
-//    public String getCounterFile() {
-//        return counterFile;
-//    }
-//
-//    public void setCounterFile(String counterFile) {
-//        this.counterFile = counterFile;
-//        this.getAttrs().add("counter_file");
-//    }
-
-
     /**
      * @return the fileExtension
      */
@@ -310,49 +317,6 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         this.fileExtension = fileExtension;
         this.getAttrs().add("file_extension");
     }
-
-//    public String getLayoutStructureType() {
-//        return layoutStructureType;
-//    }
-//
-//    public void setLayoutStructureType(String layoutStructureType) {
-//        if(!layoutStructureType.matches("columnNumber|free")){
-//            layoutStructureType="free";
-//        }
-//        if(layoutStructureType.matches("free")){
-//            this.layoutColumnNumber=null;            
-//            this.getAttrs().remove("columnNumber");
-//        }
-//        this.layoutStructureType = layoutStructureType;
-//        this.getAttrs().add("layoutStructureType");
-//    }
-//
-//    public Integer[] getLayoutColumnNumber() {
-//        return layoutColumnNumber;
-//    }
-//
-//    public void setLayoutColumnNumber(String layoutColumnNumber) {
-//        setLayoutColumnNumber(getIntArray(layoutColumnNumber));
-//    }
-//    
-//    public void setLayoutColumnNumber(Integer[] layoutColumnNumber) {
-//        this.layoutColumnNumber = layoutColumnNumber;
-//        this.setLayoutStructureType("columnNumber");
-//        this.getAttrs().add("layoutColumnNumber");
-//    }
-//    public Integer[][][] getLayoutColumnPositions() {
-//        return layoutColumnPositions;
-//    }
-//
-//    public void setLayoutColumnPositions(String layoutColumnPositions) {
-//        setLayoutColumnPositions(getInt3dArray(layoutColumnPositions));
-//    }
-//    
-//    public void setLayoutColumnPositions(Integer[][][] layoutColumnPositions) {
-//        this.layoutColumnPositions = layoutColumnPositions;
-//        this.setLayoutStructureType("columnPositions");
-//        this.getAttrs().add("layoutColumnPositions");
-//    }
     
     @Override
     public String getRegexBasePath() {
@@ -418,73 +382,94 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
 
     @Override
     public String[] getTargetfragmentBreakerProxyPackagesToSearch() {
-        return new String[] {"org.elsquatrecaps.autonewsextractor.targetfragmentbreaker.reader"};
+        return this.targetFragmentBreakerProxyPackagesToSearch;
+    }
+
+    public void setTargetfragmentBreakerProxyPackagesToSearch(String packages) {
+        this.strTargetFragmentBreakerProxyPackagesToSearch=packages;
+        setTargetfragmentBreakerProxyPackagesToSearch(getStringArray(packages));
     }
 
     @Override
     public void setTargetfragmentBreakerProxyPackagesToSearch(String[] packages) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.targetFragmentBreakerProxyPackagesToSearch = packages;
+        this.getAttr("target_fragment_breaker_proxy_packages_to_search");
     }
 
     @Override
     public String getExtractorApproach() {
-        return null;
+        return this.extractorApproach;
+    }
+
+    public void setExtractorApproach(String a) {
+        this.extractorApproach=a;
+        this.getAttrs().add("extractor_approach");
     }
 
 
     @Override
     public String getFragmentBreakerApproach() {
-        return null;
+        return this.fragmentBreakerApproach;
     }
 
     @Override
-    public void setFragmentBreakerApproach(String originDir) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void setFragmentBreakerApproach(String approach) {
+        this.fragmentBreakerApproach = approach;
+        this.getAttrs().add("fragment_breaker_approach");
     }
 
     @Override
     public String[] getInformationUnitBuilderProxyPackagesToSearch() {
-        return "org.elsquatrecaps.autonewsextractor.informationunitbuilder.runnable".split(",");
+        return this.informationUnitBuilderProxyPackagesToSearch;
     }
 
     @Override
     public void setInformationUnitBuilderProxyPackagesToSearch(String[] packages) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.informationUnitBuilderProxyPackagesToSearch = packages;
+        this.getAttr("information_unit_builder_proxy_packages_to_search");
+    }
+
+    public void setInformationUnitBuilderProxyPackagesToSearch(String packages) {
+        this.strInformationUnitBuilderProxyPackagesToSearch = packages;
+        setInformationUnitBuilderProxyPackagesToSearch(getStringArray(packages));
     }
 
     @Override
     public String[] getDataExtractProxyPackagesToSearch() {
-        return new String[] {"org.elsquatrecaps.autonewsextractor.dataextractor.parser"};
+        return this.dataExtractProxyPackagesToSearch;
     }
 
     @Override
     public void setDataExtractProxyPackagesToSearch(String[] packages) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.dataExtractProxyPackagesToSearch= packages;
+        this.getAttrs().add("data_extract_proxy_packages_to_search");
     }
 
-    @Override
-    public String getJsonConfigFile() {
-        return null;
-    }
-
-    @Override
-    public void setJsonConfigFile(String file) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void setDataExtractProxyPackagesToSearch(String packages) {
+        this.strDataExtractProxyPackagesToSearch = packages;
+        this.setDataExtractProxyPackagesToSearch(getStringArray(packages));
     }
 
     @Override
     public String[] getDataExtractCalculatorBuilderPackagesToSearch() {
-        return new String[] {"org.elsquatrecaps.autonewsextractor.dataextractor.calculators"};
+        return this.dataExtractCalculatorBuilderProxyPackagesToSearch;
     }
 
     @Override
     public void setDataExtractCalculatorBuilderPackagesToSearch(String[] packages) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.dataExtractCalculatorBuilderProxyPackagesToSearch=packages;
+        this.getAttrs().add("data_extract_calculator_builder_packages_to_search");
+    }
+
+    public void setDataExtractCalculatorBuilderPackagesToSearch(String packages) {
+        this.strDataExtractCalculatorBuilderProxyPackagesToSearch=packages;
+        this.setDataExtractCalculatorBuilderPackagesToSearch(getStringArray(packages));
     }
 
     /**
      * @return the parserConfigJsonFile
      */
+    @Override
     public String getParserConfigJsonFile() {
         return parserConfigJsonFile;
     }
@@ -492,6 +477,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     /**
      * @param parserConfigJsonFile the parserConfigJsonFile to set
      */
+    @Override
     public void setParserConfigJsonFile(String parserConfigJsonFile) {
         this.parserConfigJsonFile = parserConfigJsonFile;
         this.getAttrs().add("parser_config_json_file");        
