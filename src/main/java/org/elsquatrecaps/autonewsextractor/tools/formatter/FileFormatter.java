@@ -1,7 +1,5 @@
 package org.elsquatrecaps.autonewsextractor.tools.formatter;
 
-import org.elsquatrecaps.autonewsextractor.model.BaseFactData;
-
 /**
  *
  * @author josep
