@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.elsquatrecaps.autonewsextractor.error.AutoNewsReaderRuntimeException;
 import org.elsquatrecaps.autonewsextractor.model.MutableNewsExtractedData;
+import org.elsquatrecaps.utilities.tools.Callback;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -159,7 +160,7 @@ public /*abstract*/ class GenericCsvFileFormatter<T extends MutableNewsExtracted
     }
 
 //    public abstract String getCsvHeader();    
-    private String getCsvHeader(){
+    protected String getCsvHeader(){
         return getCsvHeaderAsTables(headerFields);
     } 
     
@@ -209,18 +210,26 @@ public /*abstract*/ class GenericCsvFileFormatter<T extends MutableNewsExtracted
 
     @Override
     public void toFile(String outputFileName) {
+        toFile(outputFileName, (param) -> {
+            return  factToFactDataAsString(param).getRow();
+        });
+    }    
+    
+    protected void toFile(String outputFileName, Callback<T, String> rowTransformer) {
+        File f = (new File(outputFileName)).getAbsoluteFile();
         if(!outputFileName.endsWith(".csv")){
             outputFileName = outputFileName.concat(".csv");
         }
-        File f = new File(outputFileName);
-        f.getParentFile().mkdirs();
+        if(f.getParentFile()!=null){
+            f.getParentFile().mkdirs();
+        }
         try(BufferedWriter fw = new BufferedWriter(new FileWriter(outputFileName, isAppendFile()))){
             if(!isAppendFile()){
                 fw.write(getCsvHeader());
                 fw.newLine();
             }
             for(T fact: this.getList()){
-                fw.write(GenericCsvFileFormatter.this.factToFactDataAsString(fact).getRow());
+                fw.write(rowTransformer.call(fact));
                 fw.newLine();
             }            
         } catch (IOException ex) {

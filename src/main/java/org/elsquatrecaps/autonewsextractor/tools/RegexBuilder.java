@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.elsquatrecaps.autonewsextractor.tools;
 
 import java.io.BufferedReader;
@@ -88,7 +83,8 @@ public class RegexBuilder {
     }
     
     public int getFlagsFromFile(String file){
-        return getFlagsFromPath(getOptionsPathFromName(file, basePath, searchPath, variantRegex));
+        return getFlagsFromFile(getOptionsFileFromName(file, new File(basePath), searchPath, variantRegex));
+//        return getFlagsFromPath(getOptionsPathFromName(file, basePath, searchPath, variantRegex));
     }
     
     public static int getFlagsFromFile(File file){

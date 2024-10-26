@@ -206,13 +206,11 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         try {
             parser.parseArgs(args, this);
             this.appendOutputFile = getBoolean(this.append_output_file);
-//            this.layoutColumnNumber = getIntArray(this.s_layoutColumnNumber);
-//            this.layoutColumnPositions = getInt3dArray(this.s_layoutColumnPositions);
             this.parseModel = getStringArray(this.s_parseModel);
-            this.setTargetfragmentBreakerProxyPackagesToSearch(getStringArray(this.strTargetFragmentBreakerProxyPackagesToSearch));
-            this.setInformationUnitBuilderProxyPackagesToSearch(getStringArray(this.strInformationUnitBuilderProxyPackagesToSearch));
-            this.setDataExtractProxyPackagesToSearch(getStringArray(this.strDataExtractProxyPackagesToSearch));
-            this.setDataExtractCalculatorBuilderPackagesToSearch(getStringArray(this.strDataExtractCalculatorBuilderProxyPackagesToSearch));
+            this.targetFragmentBreakerProxyPackagesToSearch = getStringArray(this.strTargetFragmentBreakerProxyPackagesToSearch);
+            this.informationUnitBuilderProxyPackagesToSearch = getStringArray(this.strInformationUnitBuilderProxyPackagesToSearch);
+            this.dataExtractProxyPackagesToSearch = getStringArray(this.strDataExtractProxyPackagesToSearch);
+            this.dataExtractCalculatorBuilderProxyPackagesToSearch = getStringArray(this.strDataExtractCalculatorBuilderProxyPackagesToSearch);
             this.updateAttrs();
         } catch (ArgumentParserException e) {
             parser.handleError(e);
