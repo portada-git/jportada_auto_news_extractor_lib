@@ -15,9 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.elsquatrecaps.autonewsextractor.error.AutoNewsReaderRuntimeException;
+import org.elsquatrecaps.autonewsextractor.error.AutoNewsRuntimeException;
 import org.elsquatrecaps.autonewsextractor.model.MutableNewsExtractedData;
 import org.elsquatrecaps.utilities.tools.Callback;
 import org.json.JSONArray;
@@ -234,7 +232,7 @@ public /*abstract*/ class GenericCsvFileFormatter<T extends MutableNewsExtracted
             }            
         } catch (IOException ex) {
 //            Logger.getLogger(GenericCsvFileFormatter.class.getName()).log(Level.SEVERE, null, ex);
-            throw new AutoNewsReaderRuntimeException(String.format("File %s doesn't exist or can't be read. Pleas revise you", f), ex);
+            throw new AutoNewsRuntimeException(String.format("File %s doesn't exist or can't be read. Pleas revise you", f), ex);
         }
     }    
 
