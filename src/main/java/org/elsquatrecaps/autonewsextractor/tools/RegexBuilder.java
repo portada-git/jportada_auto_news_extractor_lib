@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.elsquatrecaps.autonewsextractor.error.AutoNewsRegexNotFoundRuntimeException;
+import org.elsquatrecaps.autonewsextractor.error.AutoNewsRuntimeException;
 import org.elsquatrecaps.autonewsextractor.tools.configuration.RegexConfiguration;
 //import org.elsquatrecaps.autonewsextractor.AppArguments;
 
@@ -108,7 +109,8 @@ public class RegexBuilder {
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(RegexBuilder.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(RegexBuilder.class.getName()).log(Level.SEVERE, null, ex);
+            throw new AutoNewsRegexNotFoundRuntimeException(String.format("The file ('%s') doesn't exist or can't be read. Please revise you", path),ex);
         }
         return ret;
     }
@@ -136,7 +138,7 @@ public class RegexBuilder {
         String ret = "";
         StringBuilder contentBuilder = new StringBuilder();
 //        StringBuffer replaced = new StringBuffer();
-        try{
+//        try{
             File file = getRegexFileFromName(filename, basePath, searchPath, variant);
             try (BufferedReader br = new BufferedReader(new FileReader(file))){
                 String currentLine;
@@ -163,14 +165,14 @@ public class RegexBuilder {
                 ret = RegexBuilder.replaceAll(matcher, (m) -> {      
                     return Matcher.quoteReplacement(getStrPatternFromFile(m.group(1), basePath, searchPath, variant));
                 });
-            } catch (FileNotFoundException ex) { 
-                Logger.getLogger(RegexBuilder.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException | IllegalArgumentException ex) {
-                Logger.getLogger(RegexBuilder.class.getName()).log(Level.SEVERE, null, ex);
+//                Logger.getLogger(RegexBuilder.class.getName()).log(Level.SEVERE, null, ex);
+                throw new AutoNewsRuntimeException(String.format("File %s doesn't exist or can't be read. Pleas revise you", file), ex);
+                
             }
-        }catch(AutoNewsRegexNotFoundRuntimeException ex){
-            Logger.getLogger(RegexBuilder.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        }catch(AutoNewsRegexNotFoundRuntimeException ex){
+//            Logger.getLogger(RegexBuilder.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         return ret;
     }
     
@@ -185,7 +187,7 @@ public class RegexBuilder {
             ret = getVariantFileFromFiledir(dir, fileName, variant);
         }
         if(!ret.exists()){
-            throw new AutoNewsRegexNotFoundRuntimeException();
+            throw new AutoNewsRegexNotFoundRuntimeException(String.format("The file ('%s') doesn't exist or can't be read. Please revise you", fileName));
         }
         return ret;        
     }

@@ -233,8 +233,8 @@ public /*abstract*/ class GenericCsvFileFormatter<T extends MutableNewsExtracted
                 fw.newLine();
             }            
         } catch (IOException ex) {
-            Logger.getLogger(GenericCsvFileFormatter.class.getName()).log(Level.SEVERE, null, ex);
-            throw new AutoNewsReaderRuntimeException(ex);
+//            Logger.getLogger(GenericCsvFileFormatter.class.getName()).log(Level.SEVERE, null, ex);
+            throw new AutoNewsReaderRuntimeException(String.format("File %s doesn't exist or can't be read. Pleas revise you", f), ex);
         }
     }    
 

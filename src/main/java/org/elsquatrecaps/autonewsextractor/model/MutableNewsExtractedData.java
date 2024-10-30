@@ -3,6 +3,7 @@ package org.elsquatrecaps.autonewsextractor.model;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.elsquatrecaps.autonewsextractor.error.AutoNewsRuntimeException;
 import org.json.JSONObject;
 
 /**
@@ -153,7 +154,10 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
                 try {
                     publicationDate = formatter.parse(date);
                 } catch (ParseException ex2) {
-                    publicationDate=null;
+//                    publicationDate=null;
+                    throw new AutoNewsRuntimeException(
+                            String.format(
+                                    "There are problems with the publication date ('%s'). It doesn't seem to follow the expected format", date), ex2);
                 }
             }
         }

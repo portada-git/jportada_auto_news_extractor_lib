@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import org.elsquatrecaps.autonewsextractor.error.AutoNewsRuntimeException;
 import org.elsquatrecaps.autonewsextractor.model.MutableNewsExtractedData;
 import org.elsquatrecaps.autonewsextractor.model.NewsExtractedData;
 
@@ -27,7 +28,8 @@ public class MainAutoNewsExtractorParser extends MainExtractorParser<NewsExtract
                 try {
                     _publicationDate = formatter.parse(publicationDate);
                 } catch (ParseException ex2) {
-                    _publicationDate=null;
+//                    _publicationDate=null;
+                    throw new AutoNewsRuntimeException("The publication date is mandatory in this process, please use some existent methot to supply the publication date");
                 }
             }
         }

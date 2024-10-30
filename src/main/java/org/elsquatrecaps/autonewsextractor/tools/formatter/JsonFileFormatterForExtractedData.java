@@ -7,8 +7,7 @@ package org.elsquatrecaps.autonewsextractor.tools.formatter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.elsquatrecaps.autonewsextractor.error.AutoNewsRuntimeException;
 import org.elsquatrecaps.autonewsextractor.model.ExtractedData;
 import org.elsquatrecaps.autonewsextractor.model.ImmutableNewsExtractedData;
 import org.elsquatrecaps.autonewsextractor.model.MutableNewsExtractedData;
@@ -32,7 +31,8 @@ public class JsonFileFormatterForExtractedData<T extends ExtractedData> implemen
         try (FileWriter fw = new FileWriter(outputFileName)){
             fw.append(toString());
         } catch (IOException ex) {
-            Logger.getLogger(JsonFileFormatterForExtractedData.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(JsonFileFormatterForExtractedData.class.getName()).log(Level.SEVERE, null, ex);
+            throw new AutoNewsRuntimeException(String.format("File %s can't be written. Please revise the permissions", outputFileName), ex);
         }
     }
     

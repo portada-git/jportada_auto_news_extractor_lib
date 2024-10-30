@@ -6,9 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.elsquatrecaps.autonewsextractor.targetfragmentbreaker.reader.TargetFragmentBreakerProxyClass;
+import org.elsquatrecaps.autonewsextractor.error.AutoNewsRuntimeException;
 import org.elsquatrecaps.autonewsextractor.tools.configuration.Configurable;
 import org.elsquatrecaps.autonewsextractor.tools.configuration.InformationUnitBuilderrConfiguration;
 import org.elsquatrecaps.utilities.tools.Callback;
@@ -90,8 +88,8 @@ public class InformationUnitBuilderFromSdlFiles implements InformationUnitBuilde
                     Date date = formatter.parse(dateInString);
                     callbak.call(new ImplInformationUnitDataParamsForCallback(date, files));
                 }catch (ParseException e) {
-                    callbak.call(new ImplInformationUnitDataParamsForCallback(e));
-                    Logger.getLogger(InformationUnitBuilderFromSdlFiles.class.getName()).log(Level.SEVERE, e.getMessage(), e);
+//                    callbak.call(new ImplInformationUnitDataParamsForCallback(e));
+                    throw new AutoNewsRuntimeException(e);
                 }
             }
             i++;

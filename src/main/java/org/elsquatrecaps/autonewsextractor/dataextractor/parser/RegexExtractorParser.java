@@ -23,6 +23,7 @@ import org.json.JSONObject;
  */
 @ParserMarkerAnnotation(approach = "regex")
 public class RegexExtractorParser<E extends ExtractedData> implements ExtractorParserApproach<E>{
+    private static final String LAST_EXTRACTED_DATA = "last_extracted_data";
     String basePath;
     String searchPath;
     String variant;

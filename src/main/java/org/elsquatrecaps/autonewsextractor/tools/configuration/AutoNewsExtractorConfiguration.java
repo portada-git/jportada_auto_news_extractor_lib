@@ -59,6 +59,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
      *
      * @param dest
      * @param val
+     * @return 
      */
     @Override
     protected boolean setDefaultArg(String dest, Object val){

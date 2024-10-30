@@ -8,11 +8,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.elsquatrecaps.autonewsextractor.error.AutoNewsRuntimeException;
 import org.elsquatrecaps.autonewsextractor.model.ExtractedData;
 import org.elsquatrecaps.autonewsextractor.model.MutableNewsExtractedData;
 import org.elsquatrecaps.autonewsextractor.tools.configuration.ParserConfiguration;
 import org.elsquatrecaps.utilities.tools.configuration.Configuration;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -28,14 +30,32 @@ public class MainExtractorParser<E extends ExtractedData> implements ExtractorPa
 
     @Override
     public void init(Configuration configuration) {
+        boolean error=false;
+        String jsc=null;
+        String message = null;
         this.configuration = configuration;
         ParserConfiguration conf = (ParserConfiguration) configuration;
         if(conf.getParserConfigJsonFile()!=null && jsonConfig==null){
             try{
-                String jsc = Files.readString(Paths.get(conf.getParserConfigJsonFile()));
+                jsc = Files.readString(Paths.get(conf.getParserConfigJsonFile()));
                 jsonConfig = new JSONObject(jsc);
+            } catch (JSONException ex) {
+                message = "Probably the json content of file %s is a bad json format";
+                error = true;
             } catch (IOException ex) {
-                Logger.getLogger(MainExtractorParser.class.getName()).log(Level.SEVERE, null, ex);
+                //Logger.getLogger(MainExtractorParser.class.getName()).log(Level.SEVERE, null, ex);
+                String filename = conf.getParserConfigJsonFile();
+                if(filename ==null || filename.isEmpty() || filename.isBlank()){
+                    message = "The parameter 'parser_config_json_file' in properties file, is not defined or its value doesn't referred and existing file";
+                }else if(jsc==null){
+                    message = "The value of 'parser_config_json_file' in properties file has a bad name, please revise it.";
+                }else{
+                    message = "";
+                }
+                error = true;
+            }
+            if(error){
+                throw new AutoNewsRuntimeException(String.format("Ther are som problem reading the JSON configuration for the extractors defined. %s", message));
             }
         }
     }

@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import org.elsquatrecaps.autonewsextractor.error.AutoNewsReaderRuntimeException;
 import org.elsquatrecaps.autonewsextractor.tools.ReaderTools;
 import org.elsquatrecaps.autonewsextractor.tools.RegexBuilder;
@@ -60,9 +61,10 @@ public abstract class TragetFragmentBreakerByRegex extends AbstractReader implem
   protected String prepareTextFromFile(String file) {
         String rawText;
         String bonText;
+        String regex_name = "is_page_number";
         try {
             RegexConfiguration regexConfiguration = (RegexConfiguration) especificConfigurator;        
-            Pattern pattern = RegexBuilder.getInstance(regexConfiguration).buildRegex("is_page_number");
+            Pattern pattern = RegexBuilder.getInstance(regexConfiguration).buildRegex(regex_name);
             rawText = ReaderTools.textFileRawContent(especificConfigurator.getOriginDir(), file);
             rawText = rawText.replaceAll("\r\n", "\n");
             while (pattern.matcher(rawText).matches()) {
@@ -70,9 +72,11 @@ public abstract class TragetFragmentBreakerByRegex extends AbstractReader implem
             }
             bonText = ReaderTools.singleLf2Space(rawText);
             bonText = ReaderTools.doubleLf2SingleLf(bonText);
+        } catch (PatternSyntaxException ex) {
+            throw new AutoNewsReaderRuntimeException(String.format("The expression regular named '%s' is bad. Please, revise it", regex_name));
         } catch (IOException ex) {
-            Logger.getLogger(TragetFragmentBreakerByRegex.class.getName()).log(Level.SEVERE, null, ex);
-            throw new AutoNewsReaderRuntimeException(ex);
+//            Logger.getLogger(TragetFragmentBreakerByRegex.class.getName()).log(Level.SEVERE, null, ex);
+            throw new AutoNewsReaderRuntimeException(String.format("The file %s doesn't exist or can't be read", file), ex);
         }
         return bonText;
     }

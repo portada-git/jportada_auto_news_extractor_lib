@@ -17,41 +17,22 @@ public abstract class RegexCalculator<P,R> extends AbstractCalculator<P, R>{
     private String basePath;
     private String searchPath;
     private String variant;
-    private Configuration conf;
-    private Integer parserId;
-//    private ExtractedData extractedData;
+
     
     @Override
     public void init(Object obj){
-        if(obj instanceof Configuration){
-            Configuration conf = (Configuration) obj;
-            init(conf);
-        }else if(obj instanceof Integer){
-            Integer parserId = (Integer) obj;
-            init(parserId);
-        }
-    }
-    
-    public void init(Configuration conf){
-        this.conf=conf;
-        if(parserId!=null){
-            __init();
-        }
-    }
-    
-    public void init(Integer parserId){
-        this.parserId=parserId;
-        if(conf!=null){
+        super.init(obj);
+        if(this.getParserId()!=null && getConfiguration()!=null){
             __init();
         }
     }
     
     private void __init(){
-        RegexConfiguration configuration = (RegexConfiguration) conf;
+        RegexConfiguration configuration = (RegexConfiguration) getConfiguration();
         this.basePath = configuration.getRegexBasePath();
         this.searchPath = configuration.getFactModel()
                 .concat("/").concat(configuration.getNewspaper())
-                .concat("/").concat(configuration.getParseModel()[parserId]);
+                .concat("/").concat(configuration.getParseModel()[getParserId()]);
         this.variant = configuration.getOcrEngineModel();
     }
     
@@ -75,11 +56,12 @@ public abstract class RegexCalculator<P,R> extends AbstractCalculator<P, R>{
     public String getVariant() {
         return variant;
     }
+    
+    protected Integer getParserId(){
+        return super.getInitData(PARSER_ID);
+    }
 
-//    /**
-//     * @return the extractedData
-//     */
-//    public ExtractedData getExtractedData() {
-//        return extractedData;
-//    }
+    protected Configuration getConfiguration(){
+        return super.getInitData(CONFIGURATION);
+    }
 }

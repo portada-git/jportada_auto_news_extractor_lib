@@ -11,10 +11,10 @@ public enum ExtraDataCalculatorEnum {
     CONFIGURATION,
     PARSER_ID,
     EXTRACTED_DATA,
-    LAST_EXTRACTED_DATA,
     CONSTANTS;
     
-    private static final Map<String, ExtraDataCalculatorEnum> enumForNames = new HashMap<>();
+    public static final String LAST_EXTRACTED_DATA = "last_extracted_dada";
+    private static final Map<String, ExtraDataCalculatorEnum> enumForNames = new HashMap<>();    
     static{
         for(ExtraDataCalculatorEnum e: ExtraDataCalculatorEnum.values()){
             enumForNames.put(e.toString(), e);
