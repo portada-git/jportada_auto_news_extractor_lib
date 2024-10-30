@@ -16,6 +16,8 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
                                                                                     InformationUnitBuilderrConfiguration,
                                                                                     RegexConfiguration,
                                                                                     DataExtractConfiguration{
+    @Arg(dest="init_config_file") //-c
+    private String strinitConfigFile;
     @Arg(dest="target_fragment_breaker_proxy_packages_to_search") //-tfb_pck
     private String strTargetFragmentBreakerProxyPackagesToSearch;
     private String[] targetFragmentBreakerProxyPackagesToSearch;
@@ -66,6 +68,9 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         boolean ret=true;
         if(!this.getAttrs().contains(dest)){
             switch(dest){
+                case "init_config_file":
+                    this.setInitConfigFile((String) val);
+                    break;
                 case "target_fragment_breaker_proxy_packages_to_search":
                     this.setTargetfragmentBreakerProxyPackagesToSearch((String) val);
                     break;
@@ -129,6 +134,9 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         T ret = null;
         if(this.getAttrs().contains(key)){
             switch(key){
+                case "init_config_file":
+                    ret = (T) this.getInitConfigFile();
+                    break;
                 case "data_extract_calculator_builder_packages_to_search":
                     ret = (T) this.getDataExtractCalculatorBuilderPackagesToSearch();
                     break;
@@ -188,6 +196,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         ArgumentParser parser = ArgumentParsers.newFor("AppReader").build()
                 .defaultHelp(true)
                 .description("Extreu informació a partir de notícies relacionades amb les embarcacions entrades al port de Barcelona, usant coma a font el Diari de Barcelona");
+        parser.addArgument("-c", "--init_config_file").nargs("?").setDefault("config").help("Camí on es troba el fitxer de configuració");
         parser.addArgument("-d", "--origin_dir").nargs("?").help("Directori d'on llegir els fitxers OCR amb les noticies");
         parser.addArgument("-o", "--output_file").nargs("?").help("Camí al fitxer de sortida. Per exemple: -o c:/directori/non_fitxer");
         parser.addArgument("-a", "--appendOutputFile").nargs("?").help("Indica si es vol afegir els vaixells extrets al final del fitxer de sortida o es crea un nou fitxer a cada extracció. Nomes accepta els valors 'si' o el valor 'no'");
@@ -206,6 +215,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         parser.addArgument("-exapp", "--extractor_approach").nargs("?").help("Indica quin enfocament metodològic s'usa per a fer l'extracció");
         try {
             parser.parseArgs(args, this);
+            this.setInitConfigFile(getFile(this.strinitConfigFile));
             this.appendOutputFile = getBoolean(this.append_output_file);
             this.parseModel = getStringArray(this.s_parseModel);
             this.targetFragmentBreakerProxyPackagesToSearch = getStringArray(this.strTargetFragmentBreakerProxyPackagesToSearch);
@@ -222,6 +232,9 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     
     @Override
     protected void updateAttrs(){
+        if(this.getInitConfigFile()!=null){
+            this.getAttrs().add("init_config_file");
+        }
         if(this.getParserConfigJsonFile()!=null){
             this.getAttrs().add("parser_config_json_file");
         }
@@ -481,5 +494,11 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         this.parserConfigJsonFile = parserConfigJsonFile;
         this.getAttrs().add("parser_config_json_file");        
     }
+    
+    protected void setInitConfigFile(String iniConfigFile) {
+        this.strinitConfigFile = iniConfigFile;   
+        this.setInitConfigFile(getFile(iniConfigFile));
+        this.getAttrs().add("init_config_file");        
+    }    
     
 }
