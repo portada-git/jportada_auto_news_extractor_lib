@@ -2,7 +2,6 @@ package org.elsquatrecaps.autonewsextractor.tools;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
@@ -13,11 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.elsquatrecaps.autonewsextractor.error.AutoNewsRegexNotFoundRuntimeException;
 import org.elsquatrecaps.autonewsextractor.error.AutoNewsRuntimeException;
 import org.elsquatrecaps.autonewsextractor.tools.configuration.RegexConfiguration;
 //import org.elsquatrecaps.autonewsextractor.AppArguments;
@@ -110,7 +106,7 @@ public class RegexBuilder {
             }
         } catch (IOException ex) {
 //            Logger.getLogger(RegexBuilder.class.getName()).log(Level.SEVERE, null, ex);
-            throw new AutoNewsRegexNotFoundRuntimeException(String.format("The file ('%s') doesn't exist or can't be read. Please revise you", path),ex);
+            throw new AutoNewsRuntimeException(String.format("The file ('%s') doesn't exist or can't be read. Please revise you", path),ex);
         }
         return ret;
     }
@@ -187,7 +183,7 @@ public class RegexBuilder {
             ret = getVariantFileFromFiledir(dir, fileName, variant);
         }
         if(!ret.exists()){
-            throw new AutoNewsRegexNotFoundRuntimeException(String.format("The file ('%s') doesn't exist or can't be read. Please revise you", fileName));
+            throw new AutoNewsRuntimeException(String.format("The file ('%s') doesn't exist or can't be read. Please revise you", fileName));
         }
         return ret;        
     }

@@ -3,12 +3,10 @@ package org.elsquatrecaps.autonewsextractor.targetfragmentbreaker.reader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import org.elsquatrecaps.autonewsextractor.error.AutoNewsReaderRuntimeException;
+import org.elsquatrecaps.autonewsextractor.error.AutoNewsRuntimeException;
 import org.elsquatrecaps.autonewsextractor.tools.ReaderTools;
 import org.elsquatrecaps.autonewsextractor.tools.RegexBuilder;
 import org.elsquatrecaps.autonewsextractor.tools.configuration.Configurable;
@@ -73,10 +71,10 @@ public abstract class TragetFragmentBreakerByRegex extends AbstractReader implem
             bonText = ReaderTools.singleLf2Space(rawText);
             bonText = ReaderTools.doubleLf2SingleLf(bonText);
         } catch (PatternSyntaxException ex) {
-            throw new AutoNewsReaderRuntimeException(String.format("The expression regular named '%s' is bad. Please, revise it", regex_name));
+            throw new AutoNewsRuntimeException(String.format("The expression regular named '%s' is bad. Please, revise it", regex_name));
         } catch (IOException ex) {
 //            Logger.getLogger(TragetFragmentBreakerByRegex.class.getName()).log(Level.SEVERE, null, ex);
-            throw new AutoNewsReaderRuntimeException(String.format("The file %s doesn't exist or can't be read", file), ex);
+            throw new AutoNewsRuntimeException(String.format("The file %s doesn't exist or can't be read", file), ex);
         }
         return bonText;
     }
