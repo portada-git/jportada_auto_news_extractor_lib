@@ -15,7 +15,7 @@ import org.elsquatrecaps.autonewsextractor.dataextractor.parser.MainAutoNewsExtr
 import org.elsquatrecaps.autonewsextractor.model.ExtractedData;
 import org.elsquatrecaps.autonewsextractor.model.MutableNewsExtractedData;
 import org.elsquatrecaps.autonewsextractor.model.NewsExtractedData;
-import org.elsquatrecaps.autonewsextractor.tools.AutoNewsExtractorConfiguration;
+import org.elsquatrecaps.autonewsextractor.tools.configuration.AutoNewsExtractorConfiguration;
 import org.elsquatrecaps.autonewsextractor.tools.formatter.JsonFileFormatterForExtractedData;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -55,18 +55,23 @@ public class RegexPartialExtractorParserTest {
     public static void setUpClass() {
         String[] args ={
             "-r",
-//            "/home/josep/Dropbox/feinesJordi/github/autoNewsExtractorApp/regex",
-            "/Users/josepcanellas/Dropbox/feinesJordi/github/autoNewsExtractorApp/regex",
+            "test/regex",
+//            "/Users/josepcanellas/Dropbox/feinesJordi/github/autoNewsExtractorApp/regex",
             "-f",
-            "sdl.boatfacts",
+            "boatfacts",
             "-n",
-            "db.transkribus.xml",
+            "db",
             "-p",
-            "db.boatfact.parser,db.boatcounter.parser",
-            "-pc",
-            "/Users/josepcanellas/Dropbox/feinesJordi/github/autoNewsExtractorApp/regex_config.json",
+            "boatdata.extractor,boatcosta.extractor",
+            "-pcf",
+            "test/regex_config.json",
+//            "/Users/josepcanellas/Dropbox/feinesJordi/github/autoNewsExtractorApp/regex_config.json",
 //            "-oe",
 //            "a",
+            "-dex_pck",
+            "org.elsquatrecaps.autonewsextractor.dataextractor.parser",
+            "-decb_pck",
+            "org.elsquatrecaps.autonewsextractor.dataextractor.calculators"
         };
         configuration.parseArguments(args);    
         try{
@@ -129,8 +134,8 @@ public class RegexPartialExtractorParserTest {
                 + "Se dirige al puerto el bergantin español Constante.";
         RegexExtractorParser instance = new RegexExtractorParser();
         instance.init(configuration, 0);
-        instance.init(jsonConfig.getJSONObject("db.boatfact.parser").getJSONArray("config").getJSONObject(0).getJSONObject("configuration"));
-        instance.init(jsonConfig.getJSONObject("db.boatfact.parser").getJSONObject("constants"));
+        instance.init(jsonConfig.getJSONObject("boatdata.extractor").getJSONArray("config").getJSONObject(0).getJSONObject("configuration"));
+        instance.init(jsonConfig.getJSONObject("boatdata.extractor").getJSONObject("constants"));
         MutableNewsExtractedData partialExtractedDataToCopy = instance.getDefaultData();
         partialExtractedDataToCopy.setPublicationDate("1850-09-21");
         List<ExtractedData> result = instance.parseFromString(bonText, partialExtractedDataToCopy);
@@ -179,10 +184,6 @@ public class RegexPartialExtractorParserTest {
         List<NewsExtractedData> result = instance.parseFromString(bonText, "1855_11_09");
         JsonFileFormatterForExtractedData ff = new JsonFileFormatterForExtractedData(result);
         System.out.println(ff.toString());
-//        BoatFactCsvFormatter csvf = new BoatFactCsvFormatter();
-//        JSONArray header = instance.getFieldsProperties();
-//        System.out.println(csvf.configHeaderFileds(header).format(result).toString());
-//        csvf.configHeaderFileds(header).format(result).toFile("sortida.csv");
         assertEquals(21, result.size());
         // TODO review the generated test code and remove the default call to fail.
     }    

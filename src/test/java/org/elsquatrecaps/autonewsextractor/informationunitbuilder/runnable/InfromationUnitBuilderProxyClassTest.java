@@ -4,7 +4,7 @@
  */
 package org.elsquatrecaps.autonewsextractor.informationunitbuilder.runnable;
 
-import org.elsquatrecaps.autonewsextractor.tools.AutoNewsExtractorConfiguration;
+import org.elsquatrecaps.autonewsextractor.tools.configuration.AutoNewsExtractorConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,15 +26,21 @@ public class InfromationUnitBuilderProxyClassTest {
     public static void setUpClass() {
         String[] args ={
             "-r",
-            "/home/josep/Dropbox/feinesJordi/github/autoNewsExtractorApp/regex",
+            "test/regex",
+//            "/Users/josepcanellas/Dropbox/feinesJordi/github/autoNewsExtractorApp/regex",
             "-f",
-            "sdl.boatfacts",
+            "boatfacts",
             "-n",
-            "db.arca.txt",
+            "db",
             "-p",
-            "db.boatfact.parser,db.boatcounter.parser",
-            "-oe",
-            "a"
+            "boatdata.extractor,boatcosta.extractor",
+            "-pcf",
+            "test/regex_config.json",
+//            "/Users/josepcanellas/Dropbox/feinesJordi/github/autoNewsExtractorApp/regex_config.json",
+//            "-oe",
+//            "a",
+            "-iub_pck",
+            "org.elsquatrecaps.autonewsextractor.informationunitbuilder.runnable"
         };
         configuration.parseArguments(args);        
     }

@@ -4,11 +4,7 @@
  */
 package org.elsquatrecaps.autonewsextractor.tools;
 
-import java.io.File;
-import java.net.URI;
-import java.nio.file.Path;
-import java.util.regex.Pattern;
-import org.elsquatrecaps.autonewsextractor.tools.configuration.RegexConfiguration;
+import org.elsquatrecaps.autonewsextractor.tools.configuration.AutoNewsExtractorConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,15 +26,21 @@ public class RegexBuilderTest {
     public static void setUpClass() {
         String[] args ={
             "-r",
-            "/home/josep/Dropbox/feinesJordi/github/autoNewsExtractorApp/regex",
+            "test/regex",
+//            "/Users/josepcanellas/Dropbox/feinesJordi/github/autoNewsExtractorApp/regex",
             "-f",
-            "sdl.boatfacts",
+            "boatfacts",
             "-n",
-            "db.arca.txt",
+            "db",
             "-p",
-            "db.boatfact.parser,db.boatcounter.parser",
-            "-oe",
-            "a"
+            "boatdata.extractor,boatcosta.extractor",
+            "-pcf",
+            "test/regex_config.json",
+//            "/Users/josepcanellas/Dropbox/feinesJordi/github/autoNewsExtractorApp/regex_config.json",
+//            "-oe",
+//            "a",
+            "-dex_pck",
+            "org.elsquatrecaps.autonewsextractor.dataextractor.parser"
         };
         configuration.parseArguments(args);
     }
@@ -63,9 +65,9 @@ public class RegexBuilderTest {
         System.out.println("getInstance");
         RegexBuilder builder = RegexBuilder.getInstance(configuration);
         String p = builder.buildRegex("flag").pattern();
-        assertEquals("(?:(?:^[{| ]{0,3}((?:.*\\n?.*?)?(?:(?:[Mm]|(?:[ÚU]l?))[eco*][rf](?:[ce][an][bnu][tl][eco*])|(?:ca[nbu][lt][lt]-))[s5;}]?) {1,3}([\\w .\\/]{5,23})\\W*(?:(?:$)|(?: {2,})))|(?:^[{| ]{0,3}([Iil1|]d[eco*][mn]) {1,3}([\\w .\\/]{5,23})\\W*$)|(?:^[{| ]{0,3}([Iil1|]d\\.?) {1,3}([\\w .\\/]{5,23})\\W*$)|(?:^[{| ]{0,3}(Ifl.) {1,3}([\\w .\\/]{5,23})\\W*$)|(?:^[{| ]{0,3}(M.) {1,3}([\\w .\\/]{5,23})\\W*$)|(?:^[{| ]{0,3}((?:.*\\n?.*?)?\\w+[ce]a[nu][tl][eco*][s5;}]?(?= espa.{1,2}l.[s5]?)) {1,3}([\\w .\\/]{5,23})\\W*(?:(?:$)|(?: {2,})))|(?:^[{| ]{0,3}((?:.*\\n?.*?)?[MmNn][eco*][rf][ce]a[nu][tl][eco*][s5;}]?(?= español.[s5]?)) {1,3}([\\w .\\/]{5,23})\\W*(?:(?:$)|(?: {2,})))|(?:SANIDAD DEL PUERTO.?[ \\n]*(.*?en el dia.{3,12}\\n*)(?: *\\w+)(.*)(?=.*?[ \\n]*De .* en)(?:(?:$)|(?: {2,}))))", p);
+        assertEquals("(?:(?:^(.*(?:(?:E[mn]b.*[eo][s5])|(?:[EA][mn].{3,5}c[i¡Il1][oec]n[eosc]s)|(?:[EA]{2,3}barca.{2,4}nes)|(?:.{1,3}barc.{1,2}c[i¡Il1][oec]n[eosc].)|(?:.mbar.{1,3}c[i¡Il1][oec]n[eosc].)) (?:(?:(?:(?:[|i¡l][|i¡l])|(?:[UHN]))[eoa]g[aoeu]d..)|(?:.{4,6}adas)) .{2,7} p[uo][eo]rt[oe].*)\\n+((?:(?:(?:(?:[MmNn]|(?:[ÚU]l?))[eco*][rft](?:(?:[ce][an][bnu][tl][eco*])|(?:ca[nbu][lt][lt]-)))[s5;}]?)|(?:M.r.ant[eoa][s5]?)|(?:.{1,3}rcant[aeo][s5]?)|(?:D. g[uo][aeo](?:(?:[rn][rn])|(?:m))[aeo])|(?:))) (.*)\\.?$)|(?:^( )?((?:(?:(?:(?:[MmNn]|(?:[ÚU]l?))[eco*][rft](?:(?:[ce][an][bnu][tl][eco*])|(?:ca[nbu][lt][lt]-)))[s5;}]?)|(?:M.r.ant[eoa][s5]?)|(?:.{1,3}rcant[aeo][s5]?)|(?:D. g[uo][aeo](?:(?:[rn][rn])|(?:m))[aeo])|(?:))) (.*)\\.?\\n+)|(?:^( )?([iIl1][dD].{0,2}) ?(.{4,20})\\.?\\n+(?=De))|(?:^( )?([iIl1][dD].{0,2}) (.{4,15})\\.?\\n+)|(?:^( )?( )?([^\\d\\W]{5,15})\\.?\\n+))", p);
         p = builder.buildRegex("is_page_number").pattern();
-        assertEquals("([\\dVftiICálüKÍSí. ì'o|dO]){0,8}\\n(.*)", p);
+        assertEquals("([\\d(IlOoSt»]){0,8}\\n(.*)", p);
 //        // TODO review the generated test code and remove the default call to fail.
 //        fail("The test case is a prototype.");
     }
