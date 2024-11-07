@@ -55,7 +55,7 @@ public class RegexPartialExtractorParserTest {
     public static void setUpClass() {
         String[] args ={
             "-r",
-            "test/regex",
+            "config/regex",
 //            "/Users/josepcanellas/Dropbox/feinesJordi/github/autoNewsExtractorApp/regex",
             "-f",
             "boatfacts",
@@ -64,7 +64,7 @@ public class RegexPartialExtractorParserTest {
             "-p",
             "boatdata.extractor,boatcosta.extractor",
             "-pcf",
-            "test/regex_config.json",
+            "test/extractor_config.json",
 //            "/Users/josepcanellas/Dropbox/feinesJordi/github/autoNewsExtractorApp/regex_config.json",
 //            "-oe",
 //            "a",
@@ -136,8 +136,9 @@ public class RegexPartialExtractorParserTest {
         instance.init(configuration, 0);
         instance.init(jsonConfig.getJSONObject("boatdata.extractor").getJSONArray("config").getJSONObject(0).getJSONObject("configuration"));
         instance.init(jsonConfig.getJSONObject("boatdata.extractor").getJSONObject("constants"));
-        MutableNewsExtractedData partialExtractedDataToCopy = instance.getDefaultData();
-        partialExtractedDataToCopy.setPublicationDate("1850-09-21");
+        MutableNewsExtractedData def = new MutableNewsExtractedData();
+        def.setPublicationDate("1850-09-21");
+        MutableNewsExtractedData partialExtractedDataToCopy = instance.getDefaultData(def);
         List<ExtractedData> result = instance.parseFromString(bonText, partialExtractedDataToCopy);
         System.out.println(result);
         assertEquals(5, result.size());
@@ -181,7 +182,9 @@ public class RegexPartialExtractorParserTest {
                 + "Se dirige al puerto el bergantin español Constante.";
         MainAutoNewsExtractorParser instance = new MainAutoNewsExtractorParser();
         instance.init(configuration);
-        List<NewsExtractedData> result = instance.parseFromString(bonText, "1855_11_09");
+        MutableNewsExtractedData def = new MutableNewsExtractedData();
+        def.setPublicationDate("1855_11_09");
+        List<NewsExtractedData> result = instance.parseFromString(bonText, 0, def);
         JsonFileFormatterForExtractedData ff = new JsonFileFormatterForExtractedData(result);
         System.out.println(ff.toString());
         assertEquals(21, result.size());

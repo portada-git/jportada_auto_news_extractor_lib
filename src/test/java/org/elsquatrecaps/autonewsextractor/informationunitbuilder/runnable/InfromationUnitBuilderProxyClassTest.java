@@ -1,9 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/UnitTests/JUnit5TestClass.java to edit this template
- */
 package org.elsquatrecaps.autonewsextractor.informationunitbuilder.runnable;
 
+import org.elsquatrecaps.autonewsextractor.informationunitbuilder.reader.InfromationUnitBuilderProxyClass;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.elsquatrecaps.autonewsextractor.tools.configuration.AutoNewsExtractorConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
@@ -26,7 +26,7 @@ public class InfromationUnitBuilderProxyClassTest {
     public static void setUpClass() {
         String[] args ={
             "-r",
-            "test/regex",
+            "config/regex",
 //            "/Users/josepcanellas/Dropbox/feinesJordi/github/autoNewsExtractorApp/regex",
             "-f",
             "boatfacts",
@@ -35,14 +35,23 @@ public class InfromationUnitBuilderProxyClassTest {
             "-p",
             "boatdata.extractor,boatcosta.extractor",
             "-pcf",
-            "test/regex_config.json",
+            "config/conf_db/extractor_config.json",
 //            "/Users/josepcanellas/Dropbox/feinesJordi/github/autoNewsExtractorApp/regex_config.json",
 //            "-oe",
 //            "a",
             "-iub_pck",
-            "org.elsquatrecaps.autonewsextractor.informationunitbuilder.runnable"
+            "org.elsquatrecaps.autonewsextractor.informationunitbuilder.reader",
+            "--origin_dir",
+            "test/dades",
+            "-c",
+            "config/conf_db/init.properties"            
         };
-        configuration.parseArguments(args);        
+        try {
+            //        configuration.parseArguments(args);
+            configuration.parseArgumentsAndConfigure(args);
+        } catch (IOException ex) {
+            Logger.getLogger(InfromationUnitBuilderProxyClassTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     @AfterAll
@@ -63,17 +72,19 @@ public class InfromationUnitBuilderProxyClassTest {
     @Test
     public void testGetInstanceFromConfig() {
         System.out.println("getInstanceFromConfig");
-        InfromationUnitBuilderProxyClass instance = InfromationUnitBuilderProxyClass.getInstance("file_name", "sdl_file_name", configuration);
+        InfromationUnitBuilderProxyClass instance = InfromationUnitBuilderProxyClass.getInstance("file_name", "portada_file_name", configuration);
         
         assertNotNull(instance);
     }
     
     @Test
-    public void testRun() {
-        System.out.println("run");
-//        InfromationUnitBuilderProxyClass instance = InfromationUnitBuilderProxyClass.getInstance("file_name", "sdl_file_name", configuration);
-        
-        // TODO review the generated test code and remove the default call to fail.
+    public void testgetText() {
+        System.out.println("testgetText");
+        InfromationUnitBuilderProxyClass instance = InfromationUnitBuilderProxyClass.getInstance("file_name", "portada_file_name", configuration);
+        instance.createAndProcessEachInformationUnitFiles((param) -> {
+            System.out.println(param.getInformationUnitText());
+            return null;
+        }, "0000");
     }
     
 }
