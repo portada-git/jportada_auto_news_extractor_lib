@@ -1,4 +1,4 @@
-package org.elsquatrecaps.autonewsextractor.targetfragmentbreaker.reader;
+package org.elsquatrecaps.autonewsextractor.informationunitbuilder.reader;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -34,43 +34,6 @@ public abstract class AbstractReader implements FactReader{
         return bonText.toString();
     }
 
-    
-//    @Override
-//    public void readFileAndSaveData(String file, Date date) {
-//        String bonText = readFileAndGetText(file);
-//        this.saveDataFromText(bonText, date);   
-//    }
-//
-//    @Override
-//    public void readFileAndSaveData(String file) {
-//        String bonText = readFileAndGetText(file);
-//        this.saveDataFromText(bonText, new  Date());    
-//    }
-//
-//    @Override
-//    public void readFileAndSaveData(String[] files) {
-//        String bonText = readFileAndGetText(files);
-//        this.saveDataFromText(bonText, new Date());    
-//    }
-//
-//    @Override
-//    public void readFileAndSaveData(String[] files, Date date) {
-//        String bonText = readFileAndGetText(files);
-//        this.saveDataFromText(bonText, date);    
-//    }
-//
-//    @Override
-//    public void readFileAndSaveData(List<String> files) {
-//        String bonText = readFileAndGetText(files);
-//        this.saveDataFromText(bonText, new Date());    
-//    }
-//
-//    @Override
-//    public void readFileAndSaveData(List<String> files, Date date) {
-//        String bonText = readFileAndGetText(files);
-//        this.saveDataFromText(bonText, date);    
-//    }
-    
     protected void appendText(StringBuilder bonText, String pt){
         Pattern pattern = Pattern.compile("^.*\\.\\s*$", Pattern.DOTALL);
         Matcher matcherBt = pattern.matcher(bonText.toString());

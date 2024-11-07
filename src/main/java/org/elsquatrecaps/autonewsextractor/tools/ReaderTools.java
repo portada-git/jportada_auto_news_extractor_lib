@@ -29,12 +29,12 @@ public class ReaderTools {
         return ret;
     }
     
-    Pattern getFromPrePattern(String prePattern) throws IOException{
-        Pattern pattern = null;
-        List<String> orRegex;
-        orRegex = Files.readAllLines(Paths.get("regex/".concat(prePattern).concat(".regex")));
-        
-        return pattern;
-    }
+//    Pattern getFromPrePattern(String prePattern) throws IOException{
+//        Pattern pattern = null;
+//        List<String> orRegex;
+//        orRegex = Files.readAllLines(Paths.get("regex/".concat(prePattern).concat(".regex")));
+//        
+//        return pattern;
+//    }
     
 }

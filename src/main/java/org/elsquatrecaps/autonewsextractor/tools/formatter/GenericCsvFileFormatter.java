@@ -213,15 +213,15 @@ public /*abstract*/ class GenericCsvFileFormatter<T extends MutableNewsExtracted
         });
     }    
     
-    protected void toFile(String outputFileName, Callback<T, String> rowTransformer) {
-        File f = (new File(outputFileName)).getAbsoluteFile();
+    protected void toFile(String outputFileName, Callback<T, String> rowTransformer) {        
         if(!outputFileName.endsWith(".csv")){
             outputFileName = outputFileName.concat(".csv");
         }
+        File f = (new File(outputFileName)).getAbsoluteFile();
         if(f.getParentFile()!=null){
             f.getParentFile().mkdirs();
         }
-        try(BufferedWriter fw = new BufferedWriter(new FileWriter(outputFileName, isAppendFile()))){
+        try(BufferedWriter fw = new BufferedWriter(new FileWriter(f, isAppendFile()))){
             if(!isAppendFile()){
                 fw.write(getCsvHeader());
                 fw.newLine();

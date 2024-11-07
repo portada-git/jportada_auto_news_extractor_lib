@@ -1,8 +1,8 @@
 package org.elsquatrecaps.autonewsextractor.dataextractor.parser;
 
-import java.util.Date;
 import java.util.List;
 import org.elsquatrecaps.autonewsextractor.model.ExtractedData;
+import org.elsquatrecaps.autonewsextractor.model.ImmutableNewsExtractedData;
 import org.elsquatrecaps.autonewsextractor.model.MutableNewsExtractedData;
 import org.elsquatrecaps.utilities.tools.configuration.Configuration;
 import org.json.JSONObject;
@@ -20,9 +20,10 @@ public interface ExtractorParserApproach<E extends ExtractedData>/*extends Confi
 
     List<E> parseFromString(String bonText, MutableNewsExtractedData partialExtractedDataToCopy);
 
-    MutableNewsExtractedData getDefaultData();
+//    MutableNewsExtractedData getDefaultData();
 
-    MutableNewsExtractedData getDefaultData(Date publicationDate);
+    //MutableNewsExtractedData getDefaultData(Date publicationDate);
+    MutableNewsExtractedData getDefaultData(ImmutableNewsExtractedData baseData);
 
     void updateDefaultData(MutableNewsExtractedData extractedData);
     

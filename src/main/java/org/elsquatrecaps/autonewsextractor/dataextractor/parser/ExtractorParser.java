@@ -15,15 +15,17 @@ public interface ExtractorParser<E extends ExtractedData>{
 
 //    void init(Configuration configuration, int parserId);
     
-    void init(Configuration configuration);
+    ExtractorParser init(Configuration configuration);
 
-    void init(JSONObject jsonConfig);
+    ExtractorParser init(JSONObject jsonConfig);
     
     JSONArray getFieldsProperties();
 
-//    List<ExtractedData> parseFromString(String bonText, JSONObject partialExtractedDataToCopy);
+//    List<ExtractedData> parseFromString(String bonText, ExtractedData defaultData);
 
-    List<E> parseFromString(String bonText);
+    List<E> parseFromString(String bonText, int parseid, ExtractedData defaultData);
 
-    List<E> parseFromString(String bonText, int parseid);
+//    List<E> parseFromString(String bonText);
+//
+//    List<E> parseFromString(String bonText, int parseid);
 }

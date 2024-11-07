@@ -5,6 +5,7 @@ import net.sourceforge.argparse4j.annotation.Arg;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.elsquatrecaps.utilities.tools.configuration.AbstractConfiguration;
+import org.elsquatrecaps.utilities.tools.configuration.DevelopmentConfiguration;
 
 
 
@@ -15,7 +16,11 @@ import org.elsquatrecaps.utilities.tools.configuration.AbstractConfiguration;
 public class AutoNewsExtractorConfiguration extends AbstractConfiguration implements TargetFragmentBreakerConfiguration, 
                                                                                     InformationUnitBuilderrConfiguration,
                                                                                     RegexConfiguration,
-                                                                                    DataExtractConfiguration{
+                                                                                    DataExtractConfiguration,
+                                                                                    DevelopmentConfiguration{
+    @Arg(dest="run_for_debugging") //-rd
+    private String strRunForDebugging;
+    private boolean runForDebugging;
     @Arg(dest="init_config_file") //-c
     private String strinitConfigFile;
     @Arg(dest="target_fragment_breaker_proxy_packages_to_search") //-tfb_pck
@@ -68,6 +73,9 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         boolean ret=true;
         if(!this.getAttrs().contains(dest)){
             switch(dest){
+                case "run_for_debugging":
+                    this.setRunForDebugging((String) val);
+                    break;
                 case "init_config_file":
                     this.setInitConfigFile((String) val);
                     break;
@@ -134,6 +142,9 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         T ret = null;
         if(this.getAttrs().contains(key)){
             switch(key){
+                case "run_for_debugging":
+                    ret = (T) this.getRunForDebugging();
+                    break;
                 case "init_config_file":
                     ret = (T) this.getInitConfigFile();
                     break;
@@ -213,6 +224,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         parser.addArgument("-decb_pck", "--data_extract_calculator_builder_packages_to_search").nargs("?").help("Indica quin paquets de cerca pel proxy");
         parser.addArgument("-fbapp", "--fragment_breaker_approach").nargs("?").help("Indica quin enfocament metodològic s'usa per separar els fragments útils");
         parser.addArgument("-exapp", "--extractor_approach").nargs("?").help("Indica quin enfocament metodològic s'usa per a fer l'extracció");
+        parser.addArgument("-rd", "--run_for_debugging").nargs("?").help("Indica si cal executar el procès en mode depuració o en mode normal. Els valors: [s]i, [y]es, [c]ert, [t]rue, [v]ertader es prenen com a valors certs, qualsevol altre valors es considerarà fals.");
         try {
             parser.parseArgs(args, this);
             this.setInitConfigFile(getFile(this.strinitConfigFile));
@@ -222,6 +234,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
             this.informationUnitBuilderProxyPackagesToSearch = getStringArray(this.strInformationUnitBuilderProxyPackagesToSearch);
             this.dataExtractProxyPackagesToSearch = getStringArray(this.strDataExtractProxyPackagesToSearch);
             this.dataExtractCalculatorBuilderProxyPackagesToSearch = getStringArray(this.strDataExtractCalculatorBuilderProxyPackagesToSearch);
+            this.runForDebugging = getBoolean(this.strRunForDebugging);
             this.updateAttrs();
         } catch (ArgumentParserException e) {
             parser.handleError(e);
@@ -232,7 +245,10 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     
     @Override
     protected void updateAttrs(){
-        if(this.getInitConfigFile()!=null){
+        if(this.strRunForDebugging!=null){
+            this.getAttrs().add("run_for_debugging");
+        }
+        if(this.strinitConfigFile!=null){
             this.getAttrs().add("init_config_file");
         }
         if(this.getParserConfigJsonFile()!=null){
@@ -265,14 +281,17 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         if(this.getFileExtension()!=null){
             this.getAttrs().add("file_extension");
         }
-        if(this.getTargetfragmentBreakerProxyPackagesToSearch()!=null){
+        if(this.strTargetFragmentBreakerProxyPackagesToSearch!=null){
             this.getAttrs().add("target_fragment_breaker_proxy_packages_to_search");
         }
-        if(this.getInformationUnitBuilderProxyPackagesToSearch()!=null){
+        if(this.strInformationUnitBuilderProxyPackagesToSearch!=null){
             this.getAttrs().add("information_unit_builder_proxy_packages_to_search");
         }
-        if(this.getDataExtractProxyPackagesToSearch()!=null){
+        if(this.strDataExtractProxyPackagesToSearch!=null){
             this.getAttrs().add("data_extract_proxy_packages_to_search");
+        }
+        if(this.strDataExtractCalculatorBuilderProxyPackagesToSearch!=null){
+            this.getAttrs().add("data_extract_calculator_builder_packages_to_search");
         }
         if(this.getFragmentBreakerApproach()!=null){
             this.getAttrs().add("fragment_breaker_approach");
@@ -500,5 +519,20 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         this.setInitConfigFile(getFile(iniConfigFile));
         this.getAttrs().add("init_config_file");        
     }    
+
+    @Override
+    public Boolean getRunForDebugging() {
+        return runForDebugging;
+    }
+
+    private void setRunForDebugging(String string) {
+        setRunForDebugging(getBoolean(string));
+    }
+    
+    private void setRunForDebugging(Boolean v) {
+        this.runForDebugging=v;
+        this.getAttrs().add("run_for_debugging");        
+
+    }
     
 }

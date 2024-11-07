@@ -13,6 +13,7 @@ import org.elsquatrecaps.autonewsextractor.model.MutableNewsExtractedData;
 import org.elsquatrecaps.autonewsextractor.tools.RegexBuilder;
 import org.elsquatrecaps.autonewsextractor.tools.configuration.RegexConfiguration;
 import org.elsquatrecaps.utilities.tools.configuration.Configuration;
+import org.elsquatrecaps.utilities.tools.configuration.DevelopmentConfiguration;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -79,7 +80,7 @@ public class RegexExtractorParser<E extends ExtractedData> implements ExtractorP
         for(int inc=0; !found && inc<maxGroups; inc+=fieldsToExtract.length()){
             for(int i=0; i<fieldsToExtract.length(); i++){
                 if(matcher.group(i+1+inc)!=null){
-                    parseddata.set(fieldsToExtract.getJSONObject(i).getString("key"), matcher.group(i+1+inc));
+                    parseddata.set(fieldsToExtract.getJSONObject(i).getString("key"), matcher.group(i+1+inc).trim());
                     found=true;
                 }
             }
@@ -93,7 +94,7 @@ public class RegexExtractorParser<E extends ExtractedData> implements ExtractorP
                 proxy.init(ExtraDataCalculatorEnum.LAST_EXTRACTED_DATA.toString(), lastExtracted);
                 proxy.init(ExtraDataCalculatorEnum.CONSTANTS.toString(), constants);
                 String value = proxy.calculate(fieldsToCalculate.getJSONObject(i));
-                parseddata.setCalculateValue(fieldsToCalculate.getJSONObject(i).getString("key"), value);
+                parseddata.setCalculateValue(fieldsToCalculate.getJSONObject(i).getString("key"), value.trim());
             }        
         }
         return parseddata;
@@ -108,18 +109,29 @@ public class RegexExtractorParser<E extends ExtractedData> implements ExtractorP
         String textUnparsed;        
         MutableNewsExtractedData parseddata = null;
         Pattern partialPattern = RegexBuilder.getInstance(basePath, searchPath, variant).buildRegex(mainRegex);
+        if(configuration instanceof DevelopmentConfiguration && ((DevelopmentConfiguration)configuration).getRunForDebugging()){
+            System.out.println(String.format("\n==============\n\nPattern (from %s): \"%s\"\n\n--------------\n", mainRegex, partialPattern.toString()));
+            System.out.println(String.format("Raw text: \"%s\"\n\n--------------\n", bonText));
+        }
         Matcher matcher = partialPattern.matcher(bonText);
         if(matcher.find()){
             parseddata = parseDataFromMatcher(matcher, partialExtractedDataToCopy, parseddata);
-            textParsed = bonText.substring(matcher.start(), matcher.end());
+            textParsed = bonText.substring(matcher.start(), matcher.end()).trim();
             firstPos = matcher.end();            
         }
         while(matcher.find()){
             endPos = matcher.start();
-            textUnparsed = bonText.substring(firstPos, endPos);
+            textUnparsed = bonText.substring(firstPos, endPos).trim();
             parseddata.setParsedText(textParsed);
             parseddata.setUnparsedText(textUnparsed);
             ret.add((E) parseddata);
+            printForDebbuging(textParsed, textUnparsed, parseddata);
+//            if(configuration instanceof DevelopmentConfiguration && ((DevelopmentConfiguration)configuration).getRunForDebugging()){
+//                System.out.println(String.format("Parsed text: \"%s\"\n\n--------------\n", textParsed));
+//                System.out.println(String.format("Unparsed text: \"%s\"\n\n--------------\n", textUnparsed));
+//                System.out.println(parseddataToStringForDebugging(parseddata));
+//                System.out.println("\n\n--------------\n");
+//            }
             for(int i=0; i<fieldsToExtract.length(); i++){
                 if(!fieldsToExtract.getJSONObject(i).has("copy_last_value") || fieldsToExtract.getJSONObject(i).getBoolean("copy_last_value")){
                     partialExtractedDataToCopy.setCalculateValue(
@@ -130,31 +142,74 @@ public class RegexExtractorParser<E extends ExtractedData> implements ExtractorP
             }
 
             parseddata = parseDataFromMatcher(matcher, partialExtractedDataToCopy, parseddata);
-            textParsed = bonText.substring(matcher.start(), matcher.end());
+            textParsed = bonText.substring(matcher.start(), matcher.end()).trim();
             firstPos = matcher.end();            
         }
-        textUnparsed = bonText.substring(firstPos);
-        parseddata.setParsedText(textParsed);
-        parseddata.setUnparsedText(textUnparsed);
-        ret.add((E) parseddata);
+        if(parseddata!=null){
+            textUnparsed = bonText.substring(firstPos).trim();
+            parseddata.setParsedText(textParsed);
+            parseddata.setUnparsedText(textUnparsed);
+            ret.add((E) parseddata);
+            printForDebbuging(textParsed, textUnparsed, parseddata);
+        }
         return ret;
     }
 
     @Override
-    public MutableNewsExtractedData getDefaultData(Date publicationDate) {
-        MutableNewsExtractedData ret = getDefaultData();
-        ret.setPublicationDate(publicationDate);
-        return ret;
-    }
-    
-    @Override
-    public MutableNewsExtractedData getDefaultData() {
-        MutableNewsExtractedData ret = new MutableNewsExtractedData();
+    public MutableNewsExtractedData getDefaultData(ImmutableNewsExtractedData defData) {
+        MutableNewsExtractedData ret = new MutableNewsExtractedData(defData);
         for(int i=0; i<fieldsToExtract.length(); i++){
             ret.setDefaultValue(fieldsToExtract.getJSONObject(i).getString("key"), fieldsToExtract.getJSONObject(i).getString("default_value"));
         }
         return ret;
     }
+    
+    private void printForDebbuging(String textParsed, String textUnparsed, MutableNewsExtractedData parseddata){
+        if(configuration instanceof DevelopmentConfiguration && ((DevelopmentConfiguration)configuration).getRunForDebugging()){
+            System.out.println(String.format("Parsed text: \"%s\"\n\n--------------\n", textParsed));
+            System.out.println(String.format("Unparsed text: \"%s\"\n\n--------------\n", textUnparsed));
+            System.out.println(parseddataToStringForDebugging(parseddata));
+            System.out.println("\n\n--------------\n");
+        }        
+    }
+    
+    private String parseddataToStringForDebugging(MutableNewsExtractedData parseddata){
+        StringBuilder strb = new StringBuilder();
+        strb.append("Extracted data:\n");
+        strb.append("\t -Original field values:\n");
+        for(int i=0; i<fieldsToExtract.length(); i++){
+            strb.append("\t\t --");
+            strb.append(fieldsToExtract.getJSONObject(i).getString("key"));
+            strb.append(": ");
+            strb.append(parseddata.getOriginalValue(fieldsToExtract.getJSONObject(i).getString("key")));
+            strb.append("\n");
+        }
+        strb.append("\t -Calculated field values:\n");
+        for(int i=0; i<fieldsToCalculate.length(); i++){
+            strb.append("\t\t --");
+            strb.append(fieldsToCalculate.getJSONObject(i).getString("key"));
+            strb.append(": ");
+            strb.append(parseddata.getCalculatedValue(fieldsToCalculate.getJSONObject(i).getString("key")));
+            strb.append("\n");
+        }
+        return strb.toString();
+    }
+    
+//    @Override
+//    public MutableNewsExtractedData getDefaultData(Date publicationDate) {
+//        MutableNewsExtractedData ret = getDefaultData();
+//        ret.setPublicationDate(publicationDate);
+//        return ret;
+//    }
+//    
+//    @Override
+//    public MutableNewsExtractedData getDefaultData() {
+//        MutableNewsExtractedData ret = new MutableNewsExtractedData(this.defaultData);
+//        for(int i=0; i<fieldsToExtract.length(); i++){
+//            ret.setDefaultValue(fieldsToExtract.getJSONObject(i).getString("key"), fieldsToExtract.getJSONObject(i).getString("default_value"));
+//        }
+//        return ret;
+//    }
 
     @Override
     public void updateDefaultData(MutableNewsExtractedData mutableExtractedData) {

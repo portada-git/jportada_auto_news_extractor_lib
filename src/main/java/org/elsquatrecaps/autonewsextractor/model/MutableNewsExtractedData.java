@@ -2,8 +2,9 @@ package org.elsquatrecaps.autonewsextractor.model;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
-import org.elsquatrecaps.autonewsextractor.error.AutoNewsRuntimeException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -21,22 +22,46 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
         super(extractedData);
     }
     
-    protected MutableNewsExtractedData(MutableNewsExtractedData toClone){
+    public MutableNewsExtractedData(ImmutableNewsExtractedData toClone){
         super(toClone);
     }
 
+    public void set(String field, JSONObject value){
+        _set(field, value);
+    }
+    
+    public void set(String field, JSONArray value){
+        _set(field, value);
+    }
+    
     public void set(String field, String value){
-        if(extractedData.has(field) && (extractedData.get(field) instanceof JSONObject)){
-            setOriginalValue(field, value);
+        _set(field, value);
+    }
+    
+    private void _set(String field, Object value){
+        if(isJsonStructuredValue(field)){
+            _setOriginalValue(field, value);
         }else{
             extractedData.put(field, value);
         }
     }
 
     public void setOriginalValue(String field, String value){
+        _setOriginalValue(field, value);
+    }
+    
+    public void setOriginalValue(String field, JSONObject value){
+        _setOriginalValue(field, value);
+    }
+    
+    public void setOriginalValue(String field, JSONArray value){
+        _setOriginalValue(field, value);
+    }
+    
+    private void _setOriginalValue(String field, Object value){
         JSONObject obj;
-        if(value!=null && !value.isEmpty()){
-            if(extractedData.has(field) && (extractedData.get(field) instanceof JSONObject)){
+        if(hasValue(value)){
+            if(isJsonStructuredValue(field)){
                 obj = extractedData.getJSONObject(field);
             }else{
                 obj = new JSONObject();
@@ -46,27 +71,40 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
                 obj.remove(CALCULATED_VALUE_FIELD);
             }
             extractedData.put(field, obj);
-        }else if(extractedData.has(field)){
-            if(extractedData.get(field) instanceof JSONObject){
-                obj = extractedData.getJSONObject(field);
-                obj.remove(ORIGINAL_VALUE_FIELD);
-                if(obj.has(CALCULATED_VALUE_FIELD)){
-                    obj.remove(CALCULATED_VALUE_FIELD);
-                }
-            }else{
+        }else if(isJsonStructuredValue(field)){
+            obj = extractedData.getJSONObject(field);
+            obj.remove(ORIGINAL_VALUE_FIELD);
+            if(obj.has(CALCULATED_VALUE_FIELD)){
+                obj.remove(CALCULATED_VALUE_FIELD);
+            }
+            if(!obj.has(DEFAULT_VALUE_FIELD)){
                 extractedData.remove(field);
             }
+        }else if(extractedData.has(field)){
+                extractedData.remove(field);
         }
     }
 
     public void setDefaultValue(String field, String value){
+        _setDefaultValue(field, value);
+    }
+    
+    public void setDefaultValue(String field, JSONArray value){
+        _setDefaultValue(field, value);
+    }
+    
+    public void setDefaultValue(String field, JSONObject value){
+        _setDefaultValue(field, value);
+    }
+    
+    private void _setDefaultValue(String field, Object value){
         JSONObject obj;
-        if(value!=null && !value.isEmpty()){
-            if(extractedData.has(field) && (extractedData.get(field) instanceof JSONObject)){
+        if(hasValue(value)){
+            if(isJsonStructuredValue(field)){
                 obj = extractedData.getJSONObject(field);
             }else{
-                if(extractedData.has(field) && (extractedData.get(field) instanceof String)){
-                    setOriginalValue(field, extractedData.getString(field));
+                if(extractedData.has(field)){
+                    _setOriginalValue(field, extractedData.get(field));
                     obj = extractedData.getJSONObject(field);
                 }else{
                     obj = new JSONObject();
@@ -74,7 +112,7 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
             }
             obj.put(DEFAULT_VALUE_FIELD, value);
             extractedData.put(field, obj);
-        }else if(extractedData.has(field) && (extractedData.get(field) instanceof JSONObject)){
+        }else if(isJsonStructuredValue(field)){
             obj = extractedData.getJSONObject(field);
             obj.remove(DEFAULT_VALUE_FIELD);
         }
@@ -82,12 +120,12 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
     
     public void setCalculateValue(String field, String value){
         JSONObject obj;
-        if(value!=null && !value.isEmpty()){
-            if(extractedData.has(field) && (extractedData.get(field) instanceof JSONObject)){
+        if(hasValue(value)){
+            if(isJsonStructuredValue(field)){
                 obj = extractedData.getJSONObject(field);
             }else{
-                if(extractedData.has(field) && (extractedData.get(field) instanceof String)){
-                    setOriginalValue(field, extractedData.getString(field));
+                if(extractedData.has(field)){
+                    _setOriginalValue(field, extractedData.get(field));
                     obj = extractedData.getJSONObject(field);
                 }else{
                     obj = new JSONObject();
@@ -95,13 +133,16 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
             }
             obj.put(CALCULATED_VALUE_FIELD, value);
             extractedData.put(field, obj);
-        }else if(extractedData.has(field) && (extractedData.get(field) instanceof JSONObject)){
+        }else if(isJsonStructuredValue(field)){
             obj = extractedData.getJSONObject(field);
             obj.remove(CALCULATED_VALUE_FIELD);
         }
     }
-
-
+    
+    private boolean hasValue(Object val){
+        return  val!=null && !((val instanceof String) && (((String)val).isEmpty() || ((String)val).isBlank()));
+    }
+    
     /**
      * @return 
      */
@@ -121,7 +162,7 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
      * @param parsedText the parsedText to set
      */
     public void setParsedText(String parsedText) {
-        this.setOriginalValue("parsedText", parsedText);
+        this.setOriginalValue(PARSED_TEXT_FIELD_NAME, parsedText);
     }
     
 
@@ -129,7 +170,7 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
      * @param unparsedText the unparsedText to set
      */
     public void setUnparsedText(String unparsedText) {
-        this.setOriginalValue("unparsedText", unparsedText);
+        this.setOriginalValue(UNPARSED_TEXT_FIELD_NAME, unparsedText);
     }
     
     public MutableNewsExtractedData clone() {
@@ -137,7 +178,7 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
     }
     
     public void setPublicationDate(Date date){
-        this.setOriginalValue("publicationDate", String.valueOf(date.getTime()));
+        this.setOriginalValue(PUBLICATION_DATE_FIELD_NAME, String.valueOf(date.getTime()));
     }
 
     public void setPublicationDate(String date){
@@ -154,21 +195,46 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
                 try {
                     publicationDate = formatter.parse(date);
                 } catch (ParseException ex2) {
-//                    publicationDate=null;
-                    throw new AutoNewsRuntimeException(
-                            String.format(
-                                    "There are problems with the publication date ('%s'). It doesn't seem to follow the expected format", date), ex2);
+                    publicationDate=null;
+//                    throw new AutoNewsRuntimeException(
+//                            String.format(
+//                                    "There are problems with the publication date ('%s'). It doesn't seem to follow the expected format", date), ex2);
                 }
             }
         }
         if(publicationDate==null){
-            this.setOriginalValue("publicationDate", date);
+            this.setOriginalValue(PUBLICATION_DATE_FIELD_NAME, date);
         }else{
             setPublicationDate(publicationDate);
         }
     }
     
     public void setRawText(String text){
-        this.setOriginalValue("rawText", text);
+        this.setOriginalValue(RAW_TEXT_FIELD_NAME, text);
     }
+
+    public void setPublicationName(String v) {
+        this.setOriginalValue(PUBLICATION_NAME_FIELD_NAME, v);
+    }
+
+    public void setPublicationPlace(String v) {
+        this.setOriginalValue(PUBLICATION_PLACE_FIELD_NAME, v);
+    }
+
+    public void setPublicationEdition(String v) {
+        this.setOriginalValue(PUBLICATION_EDITION_FIELD_NAME, v);
+    }
+
+    public void setPublicationPageNumbers(String v) {
+        this.setOriginalValue(PUBLICATION_PAGE_NUMBER_FIELD_NAME, v);
+    }
+
+    public void setPublicationPageNumberList(String[] v) {
+        this.setOriginalValue(PUBLICATION_PAGE_NUMBER_FIELD_NAME, String.join(",", v));
+    }
+
+    public void setModelVersion(String v) {
+        this.setOriginalValue(MODEL_VERSION_FIELD_NAME, v);
+    }
+
 }

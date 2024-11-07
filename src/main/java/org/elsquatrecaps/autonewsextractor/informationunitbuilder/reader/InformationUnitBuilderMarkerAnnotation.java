@@ -1,4 +1,4 @@
-package org.elsquatrecaps.autonewsextractor.targetfragmentbreaker.reader;
+package org.elsquatrecaps.autonewsextractor.informationunitbuilder.reader;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
@@ -13,7 +13,10 @@ import org.elsquatrecaps.utilities.proxies.PartOfMarkAnnotationId;
  */
 @Target({ METHOD, TYPE })
 @Retention(RUNTIME)
-public @interface TargetFragmentBreakerMarkerAnnotation {
-    @PartOfMarkAnnotationId()
-    String fragmentBreakerApproach();
+@PartOfMarkAnnotationId(orderNum = 5)
+public @interface InformationUnitBuilderMarkerAnnotation {
+    @PartOfMarkAnnotationId(orderNum = 0)
+    String joinerType();
+    @PartOfMarkAnnotationId(orderNum = 1)
+    String metadataSource();
 }

@@ -6,10 +6,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.elsquatrecaps.autonewsextractor.error.AutoNewsRuntimeException;
 import org.elsquatrecaps.autonewsextractor.model.ExtractedData;
+import org.elsquatrecaps.autonewsextractor.model.ImmutableNewsExtractedData;
 import org.elsquatrecaps.autonewsextractor.model.MutableNewsExtractedData;
 import org.elsquatrecaps.autonewsextractor.tools.configuration.ParserConfiguration;
 import org.elsquatrecaps.utilities.tools.configuration.Configuration;
@@ -26,10 +25,26 @@ public class MainExtractorParser<E extends ExtractedData> implements ExtractorPa
     Configuration configuration;
     JSONObject jsonConfig;
     int parserId=0;
-    
+    ImmutableNewsExtractedData defaultData;
 
+    public static MainExtractorParser getInstance(){
+        return new MainExtractorParser();
+    }
+    
+    public static MainExtractorParser getInstance(Configuration conf){
+        MainExtractorParser ret = new MainAutoNewsExtractorParser();
+        ret.init(conf);
+        return ret;
+    }
+    
+    public static MainExtractorParser getInstance(Configuration conf, JSONObject jsonConfig){
+        MainExtractorParser ret = new MainAutoNewsExtractorParser();
+        ret.init(conf).init(jsonConfig);
+        return ret;
+    }
+    
     @Override
-    public void init(Configuration configuration) {
+    public MainExtractorParser init(Configuration configuration) {
         boolean error=false;
         String jsc=null;
         String message = null;
@@ -58,6 +73,7 @@ public class MainExtractorParser<E extends ExtractedData> implements ExtractorPa
                 throw new AutoNewsRuntimeException(String.format("Ther are som problem reading the JSON configuration for the extractors defined. %s", message));
             }
         }
+        return this;
     }
 
 //    @Override
@@ -67,18 +83,24 @@ public class MainExtractorParser<E extends ExtractedData> implements ExtractorPa
 //    }
 
     @Override
-    public void init(JSONObject jsonConfig) {
-        this.jsonConfig = jsonConfig;       
+    public MainExtractorParser init(JSONObject jsonConfig) {
+        this.jsonConfig = jsonConfig;   
+        return this;
     }
 
-    @Override
-    public List<E> parseFromString(String bonText, int parserId) {
+    public List<E> parseFromString(String bonText, int parserId, ImmutableNewsExtractedData defaultData) {
+        this.defaultData = defaultData;
+        this.parserId = parserId;
+        return parseFromString(bonText);
+    }
+    
+    public List<E> parseFromString(String bonText, int parserId, ExtractedData defaultData) {
+        this.defaultData = new ImmutableNewsExtractedData(defaultData);
         this.parserId = parserId;
         return parseFromString(bonText);
     }
 
-    @Override
-    public List<E> parseFromString(String bonText) {
+    private List<E> parseFromString(String bonText) {
         List<E> data = new ArrayList<>();
         JSONArray localJsonConfigParserModel = this.jsonConfig.getJSONObject(((ParserConfiguration)configuration).getParseModel()[parserId]).getJSONArray("config");
         JSONObject constants = this.jsonConfig.optJSONObject(((ParserConfiguration)configuration).getParseModel()[parserId]).getJSONObject("constants");
@@ -94,8 +116,12 @@ public class MainExtractorParser<E extends ExtractedData> implements ExtractorPa
         return (List<E>) parseFromExtractedDataList(data, 1);
     }
     
+//    protected MutableNewsExtractedData getDefaultExtractedDate(ProxyAutoNewsExtractorParser proxy){
+//        MutableNewsExtractedData defaultData = proxy.getDefaultData();
+//        return defaultData;
+//    }
     protected MutableNewsExtractedData getDefaultExtractedDate(ProxyAutoNewsExtractorParser proxy){
-        MutableNewsExtractedData defaultData = proxy.getDefaultData();
+        MutableNewsExtractedData defaultData = new MutableNewsExtractedData(this.defaultData);
         return defaultData;
     }
     
@@ -127,6 +153,6 @@ public class MainExtractorParser<E extends ExtractedData> implements ExtractorPa
 
     @Override
     public JSONArray getFieldsProperties() {
-        return this.jsonConfig.getJSONObject(((ParserConfiguration)configuration).getParseModel()[parserId]).getJSONArray("fields");
+        return new JSONArray();
     }
 }

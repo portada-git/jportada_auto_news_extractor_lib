@@ -34,3 +34,7 @@ test/
 *.csv
 .DS_Store
 
+config
+/config/
+/regex/
+/resultats/

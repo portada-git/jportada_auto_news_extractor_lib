@@ -9,6 +9,10 @@ package org.elsquatrecaps.autonewsextractor.model;
  * @author josep
  */
 public interface ExtractedData extends Cloneable{
+    String MODEL_VERSION_FIELD_NAME = "model_version";
+    String RAW_TEXT_FIELD_NAME = "raw_text";
+    String PARSED_TEXT_FIELD_NAME = "parsed_text";
+    String UNPARSED_TEXT_FIELD_NAME = "unparsed_text";
 
     String CALCULATED_VALUE_FIELD = "calculated_value";
     String DEFAULT_VALUE_FIELD = "default_value";
@@ -34,6 +38,9 @@ public interface ExtractedData extends Cloneable{
     
     String getAllDataAsJson();
     
+    String getAllDataAsJson(boolean onlyOneValueForField);
+    
     String getRawText();
     
+    String getModelVersion();    
 }

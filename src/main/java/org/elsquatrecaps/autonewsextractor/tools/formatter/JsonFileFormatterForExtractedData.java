@@ -4,12 +4,12 @@
  */
 package org.elsquatrecaps.autonewsextractor.tools.formatter;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import org.elsquatrecaps.autonewsextractor.error.AutoNewsRuntimeException;
 import org.elsquatrecaps.autonewsextractor.model.ExtractedData;
-import org.elsquatrecaps.autonewsextractor.model.ImmutableNewsExtractedData;
 import org.elsquatrecaps.autonewsextractor.model.MutableNewsExtractedData;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,14 +21,27 @@ import org.json.JSONObject;
  */
 public class JsonFileFormatterForExtractedData<T extends ExtractedData> implements FileFormatter{
     List<T> data;
+    boolean printOnlyOneValueForField = false;
 
     public JsonFileFormatterForExtractedData(List<T> data) {
         this.data = data;
     }
     
+    public JsonFileFormatterForExtractedData(List<T> data, boolean printOnlyOneValueForField) {
+        this.data = data;
+        this.printOnlyOneValueForField = printOnlyOneValueForField;
+    }
+    
     @Override
     public void toFile(String outputFileName) {
-        try (FileWriter fw = new FileWriter(outputFileName)){
+        if(!outputFileName.endsWith(".json")){
+            outputFileName = outputFileName.concat(".json");
+        }
+        File f = (new File(outputFileName)).getAbsoluteFile();
+        if(f.getParentFile()!=null){
+            f.getParentFile().mkdirs();
+        }        
+        try (FileWriter fw = new FileWriter(f)){
             fw.append(toString());
         } catch (IOException ex) {
 //            Logger.getLogger(JsonFileFormatterForExtractedData.class.getName()).log(Level.SEVERE, null, ex);
@@ -40,10 +53,16 @@ public class JsonFileFormatterForExtractedData<T extends ExtractedData> implemen
     public String toString() {
         JSONArray list = new JSONArray();
         for(int i=0; i<data.size(); i++){
-            if(data.get(i) instanceof ImmutableNewsExtractedData){
-                list.put(i, ((MutableNewsExtractedData)(data.get(i))).getExtractedData());
+            if(data.get(i) instanceof MutableNewsExtractedData){
+                //list.put(i, ((MutableNewsExtractedData)(data.get(i))).getExtractedData());
+                if(printOnlyOneValueForField){
+                    JSONObject jobj = new JSONObject(data.get(i).getAllDataAsJson(printOnlyOneValueForField));
+                    list.put(i, jobj);
+                }else{
+                    list.put(i, ((MutableNewsExtractedData)(data.get(i))).getExtractedData());
+                }
             }else{
-                JSONObject jobj = new JSONObject(data.get(i).getAllDataAsJson());
+                JSONObject jobj = new JSONObject(data.get(i).getAllDataAsJson(printOnlyOneValueForField));
                 list.put(i, jobj);
             }
         }        

@@ -4,12 +4,12 @@
  */
 package org.elsquatrecaps.autonewsextractor.tools.configuration;
 
-import org.elsquatrecaps.utilities.tools.configuration.Configuration;
+import java.util.Optional;
 
 /**
  *
  * @author josep
  */
-public interface Configurable {
-    void init(Configuration conf);
+public interface Configurable<T> {
+    <C> T init(C conf);
 }

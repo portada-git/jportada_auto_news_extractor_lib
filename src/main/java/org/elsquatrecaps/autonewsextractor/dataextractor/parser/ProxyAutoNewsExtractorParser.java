@@ -3,6 +3,7 @@ package org.elsquatrecaps.autonewsextractor.dataextractor.parser;
 import java.util.Date;
 import java.util.List;
 import org.elsquatrecaps.autonewsextractor.model.ExtractedData;
+import org.elsquatrecaps.autonewsextractor.model.ImmutableNewsExtractedData;
 import org.elsquatrecaps.autonewsextractor.model.MutableNewsExtractedData;
 import org.elsquatrecaps.autonewsextractor.tools.configuration.DataExtractConfiguration;
 import org.elsquatrecaps.utilities.proxies.ProxyByAnnotationsBuilder;
@@ -103,14 +104,19 @@ public class ProxyAutoNewsExtractorParser implements ExtractorParserApproach{
         return extractor.parseFromString(bonText, partialExtractedDataToCopy);
     }
 
-    @Override
-    public MutableNewsExtractedData getDefaultData() {
-        return extractor.getDefaultData();
-    }
+//    @Override
+//    public MutableNewsExtractedData getDefaultData() {
+//        return extractor.getDefaultData();
+//    }
+//
+//    @Override
+//    public MutableNewsExtractedData getDefaultData(Date newsdate) {
+//        return extractor.getDefaultData(newsdate);
+//    }
 
     @Override
-    public MutableNewsExtractedData getDefaultData(Date newsdate) {
-        return extractor.getDefaultData(newsdate);
+    public MutableNewsExtractedData getDefaultData(ImmutableNewsExtractedData def) {
+        return extractor.getDefaultData(def);
     }
 
     @Override
