@@ -246,39 +246,46 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     @Override
     protected void updateAttrs(){
         if(this.strRunForDebugging!=null){
+            this.strRunForDebugging = strRunForDebugging.trim();
             this.getAttrs().add("run_for_debugging");
         }
         if(this.strinitConfigFile!=null){
+            this.strinitConfigFile = strinitConfigFile.trim();
             this.getAttrs().add("init_config_file");
         }
         if(this.getParserConfigJsonFile()!=null){
-            this.getAttrs().add("parser_config_json_file");
+            this.setParserConfigJsonFile(this.getParserConfigJsonFile().trim());
         }
         if(this.getFactModel()!=null){
-            this.getAttrs().add("fact_model");
+            this.setFactModel(this.getFactModel().trim());
         }
         if(this.getNewspaper()!=null){
-            this.getAttrs().add("newspaper");
+            this.setNewspaper(this.getNewspaper().trim());
         }
         if(this.getOcrEngineModel()!=null){
-            this.getAttrs().add("ocr_engine_model");
+            this.setOcrEngineModel(this.getOcrEngineModel().trim());
         }
         if(this.getRegexBasePath()!=null){
-            this.getAttrs().add("regexBasePath");
+            this.setRegexBasePath(this.getRegexBasePath().trim());
         }
         if(this.s_parseModel!=null){
+            this.s_parseModel = s_parseModel.trim();            
             this.getAttrs().add("parse_model");
         }        
         if(this.append_output_file!=null){
+            this.append_output_file = append_output_file.trim();            
             this.getAttrs().add("appendOutputFile");
         }
         if(this.originDir!=null){
+            this.originDir = originDir.trim();            
             this.getAttrs().add("origin_dir");
         }
         if(this.outputFile!=null){
+            this.outputFile = outputFile.trim();            
             this.getAttrs().add("output_file");
         }
         if(this.getFileExtension()!=null){
+            this.setFileExtension(this.getFileExtension().trim());
             this.getAttrs().add("file_extension");
         }
         if(this.strTargetFragmentBreakerProxyPackagesToSearch!=null){
@@ -309,7 +316,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
 
     @Override
     public void setOriginDir(String originDir) {
-        this.originDir = originDir;
+        this.originDir = originDir.trim();
         this.getAttrs().add("origin_dir");
     }
 
@@ -318,13 +325,13 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     }
 
     public void setOutputFile(String outputFile) {
-        this.outputFile = outputFile;
+        this.outputFile = outputFile.trim();
         this.getAttrs().add("output_file");
     }
 
 
     public void setAppend_output_file(String append_output_file) {
-        this.append_output_file = append_output_file;
+        this.append_output_file = append_output_file.trim();
         this.getAttrs().add("appendOutputFile");
     }
 
@@ -345,7 +352,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
      */
     @Override
     public void setFileExtension(String fileExtension) {
-        this.fileExtension = fileExtension;
+        this.fileExtension = fileExtension.trim();
         this.getAttrs().add("file_extension");
     }
     
@@ -356,7 +363,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
 
     @Override
     public void setRegexBasePath(String regexBasePath) {
-        this.regexBasePath = regexBasePath;
+        this.regexBasePath = regexBasePath.trim();
         this.getAttrs().add("regexBasePath");
     }
 
@@ -367,7 +374,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
 
     @Override
     public void setFactModel(String val) {
-        this.factModel = val;
+        this.factModel = val.trim();
         this.getAttrs().add("fact_model");
     }
 
@@ -378,7 +385,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
 
     @Override
     public void setNewspaper(String val) {
-        this.newspaper = val;
+        this.newspaper = val.trim();
         this.getAttrs().add("newspaper");
     }
 
@@ -390,7 +397,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
 
     @Override
     public void setOcrEngineModel(String val) {
-        this.ocrEngineModel = val;
+        this.ocrEngineModel = val.trim();
         this.getAttrs().add("ocr_engine_model");
     }
     
@@ -407,7 +414,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     }
     
     public void setParseModel(String parse_model) {
-        this.s_parseModel = parse_model;
+        this.s_parseModel = parse_model.trim();
         setParseModel(getStringArray(parse_model));
     }    
 
@@ -417,7 +424,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     }
 
     public void setTargetfragmentBreakerProxyPackagesToSearch(String packages) {
-        this.strTargetFragmentBreakerProxyPackagesToSearch=packages;
+        this.strTargetFragmentBreakerProxyPackagesToSearch=packages.trim();
         setTargetfragmentBreakerProxyPackagesToSearch(getStringArray(packages));
     }
 
@@ -433,7 +440,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     }
 
     public void setExtractorApproach(String a) {
-        this.extractorApproach=a;
+        this.extractorApproach=a.trim();
         this.getAttrs().add("extractor_approach");
     }
 
@@ -445,7 +452,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
 
     @Override
     public void setFragmentBreakerApproach(String approach) {
-        this.fragmentBreakerApproach = approach;
+        this.fragmentBreakerApproach = approach.trim();
         this.getAttrs().add("fragment_breaker_approach");
     }
 
@@ -461,7 +468,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     }
 
     public void setInformationUnitBuilderProxyPackagesToSearch(String packages) {
-        this.strInformationUnitBuilderProxyPackagesToSearch = packages;
+        this.strInformationUnitBuilderProxyPackagesToSearch = packages.trim();
         setInformationUnitBuilderProxyPackagesToSearch(getStringArray(packages));
     }
 
@@ -477,7 +484,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     }
 
     public void setDataExtractProxyPackagesToSearch(String packages) {
-        this.strDataExtractProxyPackagesToSearch = packages;
+        this.strDataExtractProxyPackagesToSearch = packages.trim();
         this.setDataExtractProxyPackagesToSearch(getStringArray(packages));
     }
 
@@ -493,7 +500,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     }
 
     public void setDataExtractCalculatorBuilderPackagesToSearch(String packages) {
-        this.strDataExtractCalculatorBuilderProxyPackagesToSearch=packages;
+        this.strDataExtractCalculatorBuilderProxyPackagesToSearch=packages.trim();
         this.setDataExtractCalculatorBuilderPackagesToSearch(getStringArray(packages));
     }
 
@@ -510,12 +517,12 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
      */
     @Override
     public void setParserConfigJsonFile(String parserConfigJsonFile) {
-        this.parserConfigJsonFile = parserConfigJsonFile;
+        this.parserConfigJsonFile = parserConfigJsonFile.trim();
         this.getAttrs().add("parser_config_json_file");        
     }
     
     protected void setInitConfigFile(String iniConfigFile) {
-        this.strinitConfigFile = iniConfigFile;   
+        this.strinitConfigFile = iniConfigFile.trim();   
         this.setInitConfigFile(getFile(iniConfigFile));
         this.getAttrs().add("init_config_file");        
     }    
@@ -526,7 +533,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     }
 
     private void setRunForDebugging(String string) {
-        setRunForDebugging(getBoolean(string));
+        setRunForDebugging(getBoolean(string.trim()));
     }
     
     private void setRunForDebugging(Boolean v) {
