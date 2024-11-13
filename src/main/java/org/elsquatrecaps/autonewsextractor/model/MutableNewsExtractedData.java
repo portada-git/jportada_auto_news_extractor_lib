@@ -217,9 +217,9 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
         this.setOriginalValue(PUBLICATION_NAME_FIELD_NAME, v);
     }
 
-    public void setPublicationPlace(String v) {
-        this.setOriginalValue(PUBLICATION_PLACE_FIELD_NAME, v);
-    }
+//    public void setPublicationPlace(String v) {
+//        this.setOriginalValue(PUBLICATION_PLACE_FIELD_NAME, v);
+//    }
 
     public void setPublicationEdition(String v) {
         this.setOriginalValue(PUBLICATION_EDITION_FIELD_NAME, v);

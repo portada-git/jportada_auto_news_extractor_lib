@@ -2,13 +2,11 @@ package org.elsquatrecaps.autonewsextractor.informationunitbuilder.reader;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -46,7 +44,7 @@ public class InformationUnitBuilderFromSdlFiles extends AbstractReader implement
                 publicationInfo.getModelVersion(),
                 publicationInfo.getPublicationDate(),
                 publicationInfo.getPublicationName(),
-                publicationInfo.getPublicationPlace(),
+                /*publicationInfo.getPublicationPlace(),*/
                 publicationInfo.getPublicationEdition(),
                 null, 
                 callbak);   
@@ -78,7 +76,7 @@ public class InformationUnitBuilderFromSdlFiles extends AbstractReader implement
             String modelVersion, 
             Date publicationDate, 
             String publicationName, 
-            String publicationPlace, 
+            /*String publicationPlace, */
             String publicationEdition, 
             String[] pageNumber, 
             Callback<? extends InformationUnitDataParamsForCallback, Void> callbak){
@@ -88,7 +86,7 @@ public class InformationUnitBuilderFromSdlFiles extends AbstractReader implement
         }
         _createAndProcessEachInformationUnit(bonText.toString(), 
                 (List<String>) null,
-                new PublicationInfo(modelVersion, publicationName, publicationName, publicationPlace, publicationEdition, pageNumber), 
+                new PublicationInfo(modelVersion, publicationDate, publicationName, /*publicationPlace, */ publicationEdition, pageNumber), 
                 callbak);
     }
     
@@ -128,10 +126,11 @@ public class InformationUnitBuilderFromSdlFiles extends AbstractReader implement
                 }
                 i+=next;
 //                try{
-                    String pagesList = String.join(",", pages);
+                    String[] pagesList = new String[pages.size()];
+                    pagesList = pages.toArray(pagesList);
                     String text = readFileAndGetText(files);
                     _createAndProcessEachInformationUnit(text, files, 
-                            new PublicationInfo(modelVersion, dateInString, npid, place, nped, pagesList), 
+                            new PublicationInfo(modelVersion, dateInString, npid, nped, pagesList), 
                             (Callback<InformationUnitDataParamsForCallback, Void>) callbak);
 //                }catch (ParseException e) {
 //                    InformationUnitDataParamsFromErrorForCallback inf = new ImplInformationUnitDataParamsForCallback(e);

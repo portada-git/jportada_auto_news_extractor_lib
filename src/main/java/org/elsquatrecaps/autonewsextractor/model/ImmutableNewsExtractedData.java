@@ -228,10 +228,10 @@ public class ImmutableNewsExtractedData implements NewsExtractedData {
         return get(PUBLICATION_NAME_FIELD_NAME);
     }
 
-    @Override
-    public String getPublicationPlace() {
-        return get(PUBLICATION_PLACE_FIELD_NAME);
-    }
+//    @Override
+//    public String getPublicationPlace() {
+//        return get(PUBLICATION_PLACE_FIELD_NAME);
+//    }
 
     @Override
     public String getPublicationEdition() {

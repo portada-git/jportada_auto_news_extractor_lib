@@ -1,5 +1,7 @@
 package org.elsquatrecaps.autonewsextractor.model;
 
+import java.util.Date;
+
 /**
  *
  * @author josep
@@ -7,22 +9,18 @@ package org.elsquatrecaps.autonewsextractor.model;
 public class PublicationInfo extends MutableNewsExtractedData{
     
     public PublicationInfo(String modelVersion, String publicationDate) {
-        this(modelVersion, publicationDate, null, null,  null, (String[]) null);
+        this(modelVersion, publicationDate, null, null,  (String[]) null);
     }
     
     public PublicationInfo(String modelVersion, String publicationDate, String publicationName) {
-        this(modelVersion, publicationDate, publicationName, null,  null, (String[]) null);
+        this(modelVersion, publicationDate, publicationName, null,  (String[]) null);
     }
     
-    public PublicationInfo(String modelVersion, String publicationDate, String publicationName, String publicationPlace) {
-        this(modelVersion, publicationDate, publicationName, publicationPlace,  null, (String[]) null);
-    }
-    
-    public PublicationInfo(String modelVersion, String publicationDate, String publicationName, String publicationPlace, String publicationEdition) {
-        this(modelVersion, publicationDate, publicationName, publicationPlace, publicationEdition, (String[]) null);
+    public PublicationInfo(String modelVersion, String publicationDate, String publicationName, String publicationEdition) {
+        this(modelVersion, publicationDate, publicationName, publicationEdition, (String[]) null);
     }
 
-    public PublicationInfo(String modelVersion, String publicationDate, String publicationName, String publicationPlace, String publicationEdition, String... pageNumber) {
+    public PublicationInfo(String modelVersion, String publicationDate, String publicationName, String publicationEdition, String... pageNumber) {
         this.setModelVersion(modelVersion);
         this.setPublicationDate(publicationDate);
         
@@ -30,9 +28,42 @@ public class PublicationInfo extends MutableNewsExtractedData{
             setPublicationName(publicationName);
         }
 
-        if(publicationPlace!=null){
-            setPublicationPlace(publicationPlace);
+//        if(publicationPlace!=null){
+//            setPublicationPlace(publicationPlace);
+//        }
+        
+        if(publicationEdition!=null){
+            setPublicationEdition(publicationEdition);
         }
+
+        if(pageNumber!=null){
+            setPublicationPageNumberList(pageNumber);
+        }        
+    }
+    
+    public PublicationInfo(String modelVersion, Date publicationDate) {
+        this(modelVersion, publicationDate, null, null,  (String[]) null);
+    }
+    
+    public PublicationInfo(String modelVersion, Date publicationDate, String publicationName) {
+        this(modelVersion, publicationDate, publicationName, null,  (String[]) null);
+    }
+    
+    public PublicationInfo(String modelVersion, Date publicationDate, String publicationName, String publicationEdition) {
+        this(modelVersion, publicationDate, publicationName, publicationEdition, (String[]) null);
+    }
+
+    public PublicationInfo(String modelVersion, Date publicationDate, String publicationName, String publicationEdition, String... pageNumber) {
+        this.setModelVersion(modelVersion);
+        this.setPublicationDate(publicationDate);
+        
+        if(publicationName!=null){
+            setPublicationName(publicationName);
+        }
+
+//        if(publicationPlace!=null){
+//            setPublicationPlace(publicationPlace);
+//        }
         
         if(publicationEdition!=null){
             setPublicationEdition(publicationEdition);
