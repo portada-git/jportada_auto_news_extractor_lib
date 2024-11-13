@@ -1,7 +1,22 @@
-# Manual de configuración y desarrollo de la aplicación _boat_fact_extractor_
+
+# jportada_auto_news_extractor_lib
+
 ([Leer en Español](README-es.md))
-Esta aplicación permite extraer información sobre entradas de embarcaciones a puertos a partir de noticias publicadas en periódicos. [... TO DO]
 
-_boat_fact_extractor_ usa la biblioteca _auto_news_extractor_lib_ la cual permite configurar la extracción de noticias de un modo genérico usando expresiones regulares.
+This is a generic library to allows you to extract information of textual news. 
 
-[... TO DO]
+[... TO DO ...]
+
+## Functionalities
+
+This library presents 3 independent functionalities that can be integrated and complemented in the final objective of information extraction. These are:
+
+### Digital file joiner
+
+### Target fragment cutter
+
+### Parser to extract information
+
+## Proxies
+
+
