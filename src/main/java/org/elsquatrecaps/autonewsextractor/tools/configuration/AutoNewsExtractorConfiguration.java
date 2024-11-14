@@ -63,7 +63,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     private String extractorApproach;
     @Arg(dest="quantity_of_characters_to_compare")   //-comp
     private String strQuantityOfCharactersToCompare;
-    private int quantityOfCharactersToCompare;
+    private Integer quantityOfCharactersToCompare;
 
     /**
      *
@@ -564,7 +564,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
 
     private void setQuantityOfCharactersToCompare(String string) {
         if(string!=null){
-            setQuantityOfCharactersToCompare(Integer.getInteger(string));
+            setQuantityOfCharactersToCompare(Integer.valueOf(string));
         }
     }
     
