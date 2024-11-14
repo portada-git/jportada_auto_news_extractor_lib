@@ -1,6 +1,5 @@
 package org.elsquatrecaps.autonewsextractor.dataextractor.parser;
 
-import java.util.Date;
 import java.util.List;
 import org.elsquatrecaps.autonewsextractor.model.ExtractedData;
 import org.elsquatrecaps.autonewsextractor.model.ImmutableNewsExtractedData;

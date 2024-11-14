@@ -13,7 +13,6 @@ import org.elsquatrecaps.utilities.proxies.PartOfMarkAnnotationId;
  */
 @Target({ METHOD, TYPE })
 @Retention(RUNTIME)
-@PartOfMarkAnnotationId(orderNum = 5)
 public @interface InformationUnitBuilderMarkerAnnotation {
     @PartOfMarkAnnotationId(orderNum = 0)
     String joinerType();
