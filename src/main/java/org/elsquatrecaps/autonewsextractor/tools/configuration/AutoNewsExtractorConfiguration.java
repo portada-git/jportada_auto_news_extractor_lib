@@ -61,6 +61,9 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     private String fragmentBreakerApproach;
     @Arg(dest="extractor_approach")   //-exapp
     private String extractorApproach;
+    @Arg(dest="quantity_of_characters_to_compare")   //-comp
+    private String strQuantityOfCharactersToCompare;
+    private int quantityOfCharactersToCompare;
 
     /**
      *
@@ -130,6 +133,9 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
                 case "extractor_approach":
                     setExtractorApproach((String) val);
                     break;  
+                case "quantity_of_characters_to_compare":
+                    setQuantityOfCharactersToCompare((String) val);
+                    break;  
                 default:
                     ret=false;
             }
@@ -197,6 +203,9 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
                 case "extractor_approach":
                     ret = (T) getExtractorApproach();
                     break;                    
+                case "quantity_of_characters_to_compare":
+                    ret = (T) getQuantityOfCharactersToCompare();
+                    break;                    
             }
         }
         return ret;
@@ -225,6 +234,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         parser.addArgument("-fbapp", "--fragment_breaker_approach").nargs("?").help("Indica quin enfocament metodològic s'usa per separar els fragments útils");
         parser.addArgument("-exapp", "--extractor_approach").nargs("?").help("Indica quin enfocament metodològic s'usa per a fer l'extracció");
         parser.addArgument("-rd", "--run_for_debugging").nargs("?").help("Indica si cal executar el procès en mode depuració o en mode normal. Els valors: [s]i, [y]es, [c]ert, [t]rue, [v]ertader es prenen com a valors certs, qualsevol altre valors es considerarà fals.");
+        parser.addArgument("-comp", "--quantity_of_characters_to_compare").nargs("?").help("Indica la quantitat de caracters a comparar si la metodologia de ensamblatge és joinerType = \"file_name\" y metadataSource = \"portada_file_name\".");
         try {
             parser.parseArgs(args, this);
             this.setInitConfigFile(getFile(this.strinitConfigFile));
@@ -235,6 +245,9 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
             this.dataExtractProxyPackagesToSearch = getStringArray(this.strDataExtractProxyPackagesToSearch);
             this.dataExtractCalculatorBuilderProxyPackagesToSearch = getStringArray(this.strDataExtractCalculatorBuilderProxyPackagesToSearch);
             this.runForDebugging = getBoolean(this.strRunForDebugging);
+            if(this.strQuantityOfCharactersToCompare!=null){
+                this.quantityOfCharactersToCompare = Integer.parseInt(this.strQuantityOfCharactersToCompare);
+            }
             this.updateAttrs();
         } catch (ArgumentParserException e) {
             parser.handleError(e);
@@ -245,6 +258,9 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     
     @Override
     protected void updateAttrs(){
+        if(this.strQuantityOfCharactersToCompare!=null){
+            this.getAttrs().add("quantity_of_characters_to_compare");
+        }        
         if(this.strRunForDebugging!=null){
             this.strRunForDebugging = strRunForDebugging.trim();
             this.getAttrs().add("run_for_debugging");
@@ -539,6 +555,22 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     private void setRunForDebugging(Boolean v) {
         this.runForDebugging=v;
         this.getAttrs().add("run_for_debugging");        
+
+    }
+    
+    public Integer getQuantityOfCharactersToCompare() {
+        return quantityOfCharactersToCompare;
+    }
+
+    private void setQuantityOfCharactersToCompare(String string) {
+        if(string!=null){
+            setQuantityOfCharactersToCompare(Integer.getInteger(string));
+        }
+    }
+    
+    private void setQuantityOfCharactersToCompare(Integer v) {
+        this.quantityOfCharactersToCompare=v;
+        this.getAttrs().add("quantity_of_characters_to_compare");        
 
     }
     

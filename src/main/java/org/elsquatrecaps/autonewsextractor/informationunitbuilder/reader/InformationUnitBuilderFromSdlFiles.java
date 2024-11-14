@@ -27,12 +27,15 @@ import org.elsquatrecaps.utilities.tools.Callback;
 
 @InformationUnitBuilderMarkerAnnotation(joinerType = "file_name", metadataSource = "portada_file_name")
 public class InformationUnitBuilderFromSdlFiles extends AbstractReader implements InformationUnitBuilder, Configurable<InformationUnitBuilderFromSdlFiles>{
-    static final int QUANTITY_OF_CHARACTERS_TO_COMPARE = 26;
+    private int quantity_of_characters_to_compare = 22;
     private InformationUnitBuilderrConfiguration especificConfigurator;
     
     @Override
     public <Configuration> InformationUnitBuilderFromSdlFiles init(Configuration conf){
         especificConfigurator = (InformationUnitBuilderrConfiguration) conf;
+        if(especificConfigurator.getAttr("quantity_of_characters_to_compare")!=null){
+            quantity_of_characters_to_compare = especificConfigurator.getAttr("quantity_of_characters_to_compare");
+        }
         return this;
     }
     
@@ -108,15 +111,14 @@ public class InformationUnitBuilderFromSdlFiles extends AbstractReader implement
                 String dateInString = fDades[i].substring(0, 10);
                 String place = fDades[i].substring(11, 14);
                 String npid = fDades[i].substring(15, 17);
-                String gnum = fDades[i].substring(18, 23);
-                String nped = fDades[i].substring(24, 25);
-                String nppg = fDades[i].substring(26, 28);
+                String nped = fDades[i].substring(18, 19);
+                String nppg = fDades[i].substring(20, 22);
                 List<String> pages = new ArrayList<>();
                 pages.add(nppg);
                 int next=0;
                 while(i+next+1<fDades.length 
-                        && fDades[i+next+1].substring(0, QUANTITY_OF_CHARACTERS_TO_COMPARE)
-                                .equals(fDades[i].substring(0, QUANTITY_OF_CHARACTERS_TO_COMPARE))){
+                        && fDades[i+next+1].substring(0, quantity_of_characters_to_compare)
+                                .equals(fDades[i].substring(0, quantity_of_characters_to_compare))){
                     next++;
                     files.add(fDades[i+next]);
                     nppg = fDades[i+next].substring(26, 28);
