@@ -27,7 +27,7 @@ import org.elsquatrecaps.utilities.tools.Callback;
 
 @InformationUnitBuilderMarkerAnnotation(joinerType = "file_name", metadataSource = "portada_file_name")
 public class InformationUnitBuilderFromSdlFiles extends AbstractReader implements InformationUnitBuilder, Configurable<InformationUnitBuilderFromSdlFiles>{
-    private int quantity_of_characters_to_compare = 22;
+    private int quantity_of_characters_to_compare = 20;
     private InformationUnitBuilderrConfiguration especificConfigurator;
     
     @Override
@@ -104,7 +104,7 @@ public class InformationUnitBuilderFromSdlFiles extends AbstractReader implement
         int i=0;
         List<String> files;
         while(i<fDades.length){
-            if(fDades[i].matches("\\d{4}_\\d{2}_\\d{2}_[A-Z]{3}_[A-Z]{2}_.*")){
+            if(fDades[i].matches("\\d{4}_\\d{2}_\\d{2}_[A-Z]{3}_[A-Z]{2}_[A-Z]_\\d{2}.*")){
                 files = new ArrayList<>();
                 files.add(fDades[i]);
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd");
@@ -117,11 +117,12 @@ public class InformationUnitBuilderFromSdlFiles extends AbstractReader implement
                 pages.add(nppg);
                 int next=0;
                 while(i+next+1<fDades.length 
+                        && fDades[i+next+1].length()>quantity_of_characters_to_compare+2
                         && fDades[i+next+1].substring(0, quantity_of_characters_to_compare)
                                 .equals(fDades[i].substring(0, quantity_of_characters_to_compare))){
                     next++;
                     files.add(fDades[i+next]);
-                    nppg = fDades[i+next].substring(26, 28);
+                    nppg = fDades[i+next].substring(20, 22);
                     if(!pages.get(pages.size()-1).equals(nppg)){
                         pages.add(nppg);
                     }

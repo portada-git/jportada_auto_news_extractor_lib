@@ -90,7 +90,7 @@ public class RegexExtractorParser<E extends ExtractedData> implements ExtractorP
                 proxy.init(ExtraDataCalculatorEnum.CONFIGURATION.toString(), configuration);
                 proxy.init(ExtraDataCalculatorEnum.PARSER_ID.toString(), parserId);
                 proxy.init(ExtraDataCalculatorEnum.EXTRACTED_DATA.toString(), parseddata);
-                proxy.init(ExtraDataCalculatorEnum.LAST_EXTRACTED_DATA.toString(), lastExtracted);
+                proxy.init(ExtraDataCalculatorEnum.LAST_EXTRACTED_DATA, lastExtracted);
                 proxy.init(ExtraDataCalculatorEnum.CONSTANTS.toString(), constants);
                 String value = proxy.calculate(fieldsToCalculate.getJSONObject(i));
                 parseddata.setCalculateValue(fieldsToCalculate.getJSONObject(i).getString("key"), value.trim());

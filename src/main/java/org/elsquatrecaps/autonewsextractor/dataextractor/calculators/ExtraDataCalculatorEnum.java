@@ -13,7 +13,7 @@ public enum ExtraDataCalculatorEnum {
     EXTRACTED_DATA,
     CONSTANTS;
     
-    public static final String LAST_EXTRACTED_DATA = "last_extracted_dada";
+    public static final String LAST_EXTRACTED_DATA = "last_extracted_data";
     private static final Map<String, ExtraDataCalculatorEnum> enumForNames = new HashMap<>();    
     static{
         for(ExtraDataCalculatorEnum e: ExtraDataCalculatorEnum.values()){

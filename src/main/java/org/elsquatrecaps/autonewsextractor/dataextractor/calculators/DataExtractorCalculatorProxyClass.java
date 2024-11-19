@@ -152,7 +152,8 @@ public class DataExtractorCalculatorProxyClass implements AutoNewsExtractorCalcu
         int lengthFields=0;
         if(param.has("literalParams")){
             length += param.getJSONArray("literalParams").length();
-        }else{
+        }
+        if(param.has("fieldParams")){
             length += (lengthFields = param.getJSONArray("fieldParams").length());
         }
         params = new String[length];

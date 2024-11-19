@@ -1,9 +1,9 @@
 package org.elsquatrecaps.autonewsextractor.targetfragmentbreaker.cutter;
 
 import org.elsquatrecaps.autonewsextractor.tools.configuration.Configurable;
-import org.elsquatrecaps.autonewsextractor.tools.configuration.TargetFragmentBreakerConfiguration;
 import org.elsquatrecaps.utilities.proxies.ProxyByAnnotationsBuilder;
 import org.elsquatrecaps.utilities.tools.configuration.Configuration;
+import org.elsquatrecaps.autonewsextractor.tools.configuration.TargetFragmentCutterConfiguration;
 
 /**
  *
@@ -29,14 +29,14 @@ public class TargetFragmentCutterProxyClass implements TargetFragmentCutter{
     }
     
     private static TargetFragmentCutter getBreaker(String type, Configuration conf){
-        TargetFragmentCutter ret =  getBreaker(type, ((TargetFragmentBreakerConfiguration)conf).getTargetfragmentBreakerProxyPackagesToSearch());
+        TargetFragmentCutter ret =  getBreaker(type, ((TargetFragmentCutterConfiguration)conf).getTargetfragmentBreakerProxyPackagesToSearch());
         Configurable c = (Configurable) ret;
         c.init(conf);
         return ret;
     }
     
     private static TargetFragmentCutter getBreaker(String type, Configuration conf, int parserModel){
-        TargetFragmentCutter ret =  getBreaker(type, ((TargetFragmentBreakerConfiguration)conf).getTargetfragmentBreakerProxyPackagesToSearch());
+        TargetFragmentCutter ret =  getBreaker(type, ((TargetFragmentCutterConfiguration)conf).getTargetfragmentBreakerProxyPackagesToSearch());
         ret.init(conf);
         ret.init(parserModel);
         return ret;

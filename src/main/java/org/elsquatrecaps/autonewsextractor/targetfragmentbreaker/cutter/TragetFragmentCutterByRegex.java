@@ -4,8 +4,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.elsquatrecaps.autonewsextractor.tools.RegexBuilder;
 import org.elsquatrecaps.autonewsextractor.tools.configuration.RegexConfiguration;
-import org.elsquatrecaps.autonewsextractor.tools.configuration.TargetFragmentBreakerConfiguration;
 import org.elsquatrecaps.utilities.tools.configuration.Configuration;
+import org.slf4j.helpers.MessageFormatter;
+import org.elsquatrecaps.autonewsextractor.tools.configuration.TargetFragmentCutterConfiguration;
 
 /**
  *
@@ -13,7 +14,7 @@ import org.elsquatrecaps.utilities.tools.configuration.Configuration;
  */
 @TargetFragmentCutterMarkerAnnotation(fragmentCutterApproach = "regex")
 public class TragetFragmentCutterByRegex implements TargetFragmentCutter{
-    private TargetFragmentBreakerConfiguration especificConfigurator;
+    private TargetFragmentCutterConfiguration especificConfigurator;
     private Integer parserModel;
     
     @Override
@@ -32,7 +33,7 @@ public class TragetFragmentCutterByRegex implements TargetFragmentCutter{
     }        
     
     public TragetFragmentCutterByRegex init(Configuration conf){
-        especificConfigurator = (TargetFragmentBreakerConfiguration) conf;
+        especificConfigurator = (TargetFragmentCutterConfiguration) conf;
         return this;
     }        
     
@@ -43,28 +44,64 @@ public class TragetFragmentCutterByRegex implements TargetFragmentCutter{
         Pattern pattern = RegexBuilder.getInstance(regexConfiguration, parserModel).buildRegex("fragment_initial_detector");
         Matcher matcher = pattern.matcher(bonText);
         if(matcher.find()){
-            String g1;
-            String g2;
+            String g1 = "";
+            String g2 = bonText;
             int groups = matcher.groupCount();
-            if(groups==3){
-                g1 = matcher.group(2).trim();
-                g2 = matcher.group(3).trim();
-            }else{
-                g1 = matcher.group(1).trim();
-                g2 = matcher.group(2).trim();
+            boolean found = groups==2 || groups==3;
+            switch (groups) {
+                case 3:
+                    g1 = matcher.group(2).trim();
+                    g2 = matcher.group(3).trim();
+                    break;
+                case 2:
+                    g1 = matcher.group(1).trim();
+                    g2 = matcher.group(2).trim();
+                    break;
+                default:
+                    for(int inc=0; !found && inc<30; inc+=3){
+                        if(matcher.group(1+inc)!=null){
+                            g1= matcher.group(2+inc);
+                            g2 = matcher.group(3+inc).trim();
+                            found=true;
+                        }
+                    }   
+                    break;
             }
-            Pattern patternEnd = RegexBuilder.getInstance(regexConfiguration, parserModel).buildRegex("fragment_end_detector");
-            Matcher matcherEnd = patternEnd.matcher(g2);
-            if(matcherEnd.find()){
-                g2 = matcherEnd.replaceAll("$1").trim();
-            }
-            ret = g1.concat("\n").concat(g2);
-            
+            if(found){
+                g2 = getTheEndOfText(g2);
+                String nex="\n";
+                if(g1.endsWith("\n")||g2.startsWith("\n")){
+                    nex="";
+                }
+                ret = g1.concat(nex).concat(g2);
+            }            
         }else{
-            Pattern patternEnd = RegexBuilder.getInstance(regexConfiguration, parserModel).buildRegex("fragment_end_detector");
-            Matcher matcherEnd = patternEnd.matcher(ret);
-            if(matcherEnd.find()){
-                ret = matcherEnd.replaceAll("$1");
+            ret = getTheEndOfText(ret);
+        }
+        return ret;
+    }
+
+    private String getTheEndOfText(String text){
+        String ret = text;
+        RegexConfiguration regexConfiguration = (RegexConfiguration) especificConfigurator;
+        Pattern patternEnd = RegexBuilder.getInstance(regexConfiguration, parserModel).buildRegex("fragment_end_detector");
+        Matcher matcher = patternEnd.matcher(text);
+        if(matcher.find()){
+            int groups = matcher.groupCount();
+            boolean found = groups==1 || groups==2;
+            switch (groups) {
+                case 2:
+                case 1:
+                    ret = matcher.group(1).trim();
+                    break;
+                default:
+                    for(int inc=0; !found && inc<20; inc+=2){
+                        if(matcher.group(1+inc)!=null){
+                            ret= matcher.group(1+inc).trim();
+                            found=true;
+                        }
+                    }   
+                    break;
             }
         }
         return ret;

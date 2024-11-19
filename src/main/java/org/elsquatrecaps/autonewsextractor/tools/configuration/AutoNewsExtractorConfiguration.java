@@ -13,7 +13,7 @@ import org.elsquatrecaps.utilities.tools.configuration.DevelopmentConfiguration;
  *
  * @author josep
  */
-public class AutoNewsExtractorConfiguration extends AbstractConfiguration implements TargetFragmentBreakerConfiguration, 
+public class AutoNewsExtractorConfiguration extends AbstractConfiguration implements TargetFragmentCutterConfiguration, 
                                                                                     InformationUnitBuilderrConfiguration,
                                                                                     RegexConfiguration,
                                                                                     DataExtractConfiguration,
@@ -251,7 +251,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
             this.updateAttrs();
         } catch (ArgumentParserException e) {
             parser.handleError(e);
-            System.exit(1);
+            //System.exit(1);
         }
     }
     
