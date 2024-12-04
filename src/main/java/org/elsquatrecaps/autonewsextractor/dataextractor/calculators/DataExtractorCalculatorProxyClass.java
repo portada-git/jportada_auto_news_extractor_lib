@@ -14,6 +14,12 @@ import org.json.JSONObject;
  */
 @SuppressWarnings("unchecked")
 public class DataExtractorCalculatorProxyClass implements AutoNewsExtractorCalculator<JSONObject, String>{
+    public static final String LITERAL_PARAMS = "literalParams";
+    public static final String FIELD_PARAMS = "fieldParams";
+    public static final String PARAMS = "params";
+    public static final String FIELD_VALUE_PARAM_TYPE = "fieldValue";
+    public static final String FIELD_NAME_PARAM_TYPE = "fieldName";
+    public static final String LITERAL_PARAM_TYPE = "literal";
 //    private static ProxyByAnnotationsBuilder<ConfigurableAutoNewsExtractorCalculator,DataExtractorCalculatorMarkerAnnotation> builder=null;
     private static ProxyByAnnotationsBuilder<AutoNewsExtractorCalculator,DataExtractorCalculatorMarkerAnnotation> builder=null;
             
@@ -149,16 +155,45 @@ public class DataExtractorCalculatorProxyClass implements AutoNewsExtractorCalcu
             }
         }
         int length=0;
+        int lengthLiterals=0;
         int lengthFields=0;
-        if(param.has("literalParams")){
-            length += param.getJSONArray("literalParams").length();
+        int lengthParams=0;
+        if(param.has(LITERAL_PARAMS)){
+            length += (lengthLiterals=param.getJSONArray(LITERAL_PARAMS).length());
         }
-        if(param.has("fieldParams")){
-            length += (lengthFields = param.getJSONArray("fieldParams").length());
+        if(param.has(FIELD_PARAMS)){
+            length += (lengthFields = param.getJSONArray(FIELD_PARAMS).length());
+        }
+        if(param.has(PARAMS)){
+            length += (lengthParams = param.getJSONArray(PARAMS).length());
         }
         params = new String[length];
-        for(int i=0; i<lengthFields; i++){
-            String[] aParam = param.getJSONArray("fieldParams").getString(i).split("\\.");
+        int id=0;
+        for(int i=0; i<lengthParams; i++, id++){
+            JSONObject p = param.getJSONArray(PARAMS).getJSONObject(i);
+            if(p.getString("type").equals(FIELD_VALUE_PARAM_TYPE)){                
+                String[] aParam = p.getString("value").split("\\.");
+                if(aParam.length>1){
+                    Object obj = extraData.get(aParam[0]);
+                    for(int pos=1; pos<aParam.length; pos++){
+                        if(obj instanceof ExtractedData){
+                            obj = ((ExtractedData)obj).get(aParam[pos]);
+                        }else if(obj instanceof Map){
+                            obj = ((Map)obj).get(aParam[pos]);
+                        }else if(obj instanceof JSONObject){
+                            obj = ((JSONObject) obj).get(aParam[pos]);
+                        }
+                    }
+                    params[i] = obj;
+                }else{
+                    params[i] = extraData.get(aParam[0]);            
+                }
+            }else{
+                params[i] = p.optString("value");
+            }
+        }
+        for(int i=0; i<lengthFields; i++, id++){
+            String[] aParam = param.getJSONArray(FIELD_PARAMS).getString(i).split("\\.");
             if(aParam.length>1){
                 Object obj = extraData.get(aParam[0]);
                 for(int pos=1; pos<aParam.length; pos++){
@@ -170,13 +205,13 @@ public class DataExtractorCalculatorProxyClass implements AutoNewsExtractorCalcu
                         obj = ((JSONObject) obj).get(aParam[pos]);
                     }
                 }
-                params[i] = obj;
+                params[id] = obj;
             }else{
-                params[i] = extraData.get(aParam[0]);            
+                params[id] = extraData.get(aParam[0]);            
             }
         }
-        for(int i=0,id=lengthFields; id < params.length; id++,i++){
-            params[id] = param.getJSONArray("literalParams").optString(i);
+        for(int i=0; i < lengthLiterals; id++,i++){
+            params[id] = param.getJSONArray(LITERAL_PARAMS).optString(i);
         }
 //        
 //        if(param.getJSONArray("type").toList().contains(ExtraDataCalculatorEnum.REGEX_CONFIGURABLE.toString())){

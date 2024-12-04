@@ -175,7 +175,7 @@ public class ImmutableNewsExtractedData implements NewsExtractedData {
             strb.append("\": ");
             if(isJsonStructuredValue(jobject.get(key))){
                 strb.append("\"");
-                strb.append(getValue(jobject.getJSONObject(key)).replaceAll("\n", "\\\\n"));
+                strb.append(getValue(jobject.getJSONObject(key)).replaceAll("\n", "\\\\n").replaceAll("\\\"", "'"));
                 strb.append("\"");
             }else if(jobject.get(key) instanceof JSONObject){
                 strb.append(getOnlyOneValueForFieldAsJson(jobject.getJSONObject(key), insidePre));
@@ -183,7 +183,7 @@ public class ImmutableNewsExtractedData implements NewsExtractedData {
                 strb.append(getOnlyOneValueForField(jobject.getJSONArray(key), insidePre));
             }else{
                 strb.append("\"");
-                strb.append(getValue(jobject.get(key)).replaceAll("\n", "\\\\n"));
+                strb.append(getValue(jobject.get(key)).replaceAll("\n", "\\\\n").replaceAll("\\\"", "'"));
                 strb.append("\"");
             }
         }
