@@ -132,6 +132,8 @@ public class MainExtractorParser<E extends ExtractedData> implements ExtractorPa
         if(parserDepth<localJsonConfigParserModel.length()){
             List<E> l = new ArrayList<>();
             String approach = localJsonConfigParserModel.getJSONObject(parserDepth).getString("approach_type");
+            String alternativeSource = localJsonConfigParserModel.getJSONObject(parserDepth).optString("source_field", ExtractedData.UNPARSED_TEXT_FIELD_NAME);
+            String alternativeTarget = localJsonConfigParserModel.getJSONObject(parserDepth).optString("target_field");
             JSONObject constants = this.jsonConfig.optJSONObject(((ParserConfiguration)configuration).getParseModel()[parserId]).getJSONObject("constants");
             ProxyAutoNewsExtractorParser proxy;
             if(constants==null){
@@ -142,7 +144,12 @@ public class MainExtractorParser<E extends ExtractedData> implements ExtractorPa
             for(ExtractedData extractedData: list){
                 MutableNewsExtractedData mutableExtractedData = (MutableNewsExtractedData) extractedData;
                 proxy.updateDefaultData(mutableExtractedData);
-                l.addAll((Collection<? extends E>) proxy.parseFromString(extractedData.getUnparsedText(), mutableExtractedData));
+                if(alternativeTarget.isEmpty()){
+                    l.addAll((Collection<? extends E>) proxy.parseFromString(extractedData.get(alternativeSource), mutableExtractedData));
+                }else{
+                    List<E> fList = (List<E>) proxy.parseFromString(extractedData.get(alternativeSource), mutableExtractedData);
+                    mutableExtractedData.set(alternativeTarget, new JSONArray(fList));
+                }
             }
             ret =  parseFromExtractedDataList(l, parserDepth+1);
         }else{
