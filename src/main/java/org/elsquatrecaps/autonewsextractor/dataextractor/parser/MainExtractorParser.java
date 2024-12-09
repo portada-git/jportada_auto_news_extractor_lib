@@ -160,11 +160,16 @@ public class MainExtractorParser<E extends ExtractedData> implements ExtractorPa
 
     @Override
     public JSONObject getCsvProperties() {
-        return this.jsonConfig.optJSONObject(((ParserConfiguration)configuration).getParseModel()[parserId]).getJSONObject("csv_view");
+        return getCsvProperties(parserId);
     }
 
     @Override
     public JSONObject getCsvProperties(int parseId) {
-        return this.jsonConfig.optJSONObject(((ParserConfiguration)configuration).getParseModel()[parseId]).getJSONObject("csv_view");
+        JSONObject ret = null;
+        JSONObject parser = this.jsonConfig.optJSONObject(((ParserConfiguration)configuration).getParseModel()[parseId]);
+        if(parser!=null){            
+            ret = parser.optJSONObject("csv_view");
+        }
+        return ret;
     }
 }
