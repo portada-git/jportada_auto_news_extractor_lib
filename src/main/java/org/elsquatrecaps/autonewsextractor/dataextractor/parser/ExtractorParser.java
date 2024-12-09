@@ -19,7 +19,9 @@ public interface ExtractorParser<E extends ExtractedData>{
 
     ExtractorParser init(JSONObject jsonConfig);
     
-    JSONArray getFieldsProperties();
+    JSONObject getCsvProperties();
+
+    JSONObject getCsvProperties(int parserId);
 
 //    List<ExtractedData> parseFromString(String bonText, ExtractedData defaultData);
 
