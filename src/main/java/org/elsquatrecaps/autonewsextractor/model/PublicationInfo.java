@@ -1,12 +1,17 @@
 package org.elsquatrecaps.autonewsextractor.model;
 
 import java.util.Date;
+import org.json.JSONObject;
 
 /**
  *
  * @author josep
  */
 public class PublicationInfo extends MutableNewsExtractedData{
+    
+    public PublicationInfo(String jsondata) {
+        super(new JSONObject(jsondata));
+    }
     
     public PublicationInfo(String modelVersion, String publicationDate) {
         this(modelVersion, publicationDate, null, null,  (String[]) null);

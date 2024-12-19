@@ -1,5 +1,8 @@
 package org.elsquatrecaps.autonewsextractor.tools.configuration;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.annotation.Arg;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -9,10 +12,9 @@ import org.elsquatrecaps.utilities.tools.configuration.DevelopmentConfiguration;
 
 
 
-/**
- *
- * @author josep
- */
+@JsonIgnoreProperties(value = {"strRunForDebugging", "strinitConfigFile", "strTargetFragmentBreakerProxyPackagesToSearch",
+"strInformationUnitBuilderProxyPackagesToSearch", "strDataExtractProxyPackagesToSearch", 
+"strDataExtractCalculatorBuilderProxyPackagesToSearch", "s_parseModel", "append_output_file", "strQuantityOfCharactersToCompare"})
 public class AutoNewsExtractorConfiguration extends AbstractConfiguration implements TargetFragmentCutterConfiguration, 
                                                                                     InformationUnitBuilderrConfiguration,
                                                                                     RegexConfiguration,
@@ -64,6 +66,10 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     @Arg(dest="quantity_of_characters_to_compare")   //-comp
     private String strQuantityOfCharactersToCompare;
     private Integer quantityOfCharactersToCompare;
+    @Arg(dest="informationUnitBuilderType")
+    private String informationUnitBuilderType;
+    @Arg(dest="metadataSource")
+    private String metadataSource;
 
     /**
      *
@@ -76,6 +82,12 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         boolean ret=true;
         if(!this.getAttrs().contains(dest)){
             switch(dest){
+                case "informationUnitBuilderType":
+                    this.setInformationUnitBuilderType((String) val);
+                    break;
+                case "metadataSource":
+                    this.setMetadataSource((String) val);
+                    break;
                 case "run_for_debugging":
                     this.setRunForDebugging((String) val);
                     break;
@@ -148,6 +160,12 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         T ret = null;
         if(this.getAttrs().contains(key)){
             switch(key){
+                case "informationUnitBuilderType":
+                    ret = (T) this.getInformationUnitBuilderType();
+                    break;
+                case "metadataSource":
+                    ret = (T) this.getMetadataSource();
+                    break;
                 case "run_for_debugging":
                     ret = (T) this.getRunForDebugging();
                     break;
@@ -235,6 +253,8 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         parser.addArgument("-exapp", "--extractor_approach").nargs("?").help("Indica quin enfocament metodològic s'usa per a fer l'extracció");
         parser.addArgument("-rd", "--run_for_debugging").nargs("?").help("Indica si cal executar el procès en mode depuració o en mode normal. Els valors: [s]i, [y]es, [c]ert, [t]rue, [v]ertader es prenen com a valors certs, qualsevol altre valors es considerarà fals.");
         parser.addArgument("-comp", "--quantity_of_characters_to_compare").nargs("?").help("Indica la quantitat de caracters a comparar si la metodologia de ensamblatge és joinerType = \"file_name\" y metadataSource = \"portada_file_name\".");
+        parser.addArgument("-iut", "--informationUnitBuilderType").nargs("?").help("Indica la metodologia d'ensamblatge a fer servir per crear les unitats d'informació");
+        parser.addArgument("-ms", "--metadataSource").nargs("?").help("Indica el tipus de metadata a fer servir durant d'ensamblatge ");
         try {
             parser.parseArgs(args, this);
             this.setInitConfigFile(getFile(this.strinitConfigFile));
@@ -332,8 +352,10 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
 
     @Override
     public void setOriginDir(String originDir) {
-        this.originDir = originDir.trim();
-        this.getAttrs().add("origin_dir");
+        if(originDir!=null){
+            this.originDir = originDir.trim();
+            this.getAttrs().add("origin_dir");
+        }        
     }
 
     public String getOutputFile() {
@@ -341,14 +363,18 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     }
 
     public void setOutputFile(String outputFile) {
-        this.outputFile = outputFile.trim();
-        this.getAttrs().add("output_file");
+        if(outputFile!=null){
+            this.outputFile = outputFile.trim();
+            this.getAttrs().add("output_file");
+        }
     }
 
 
     public void setAppend_output_file(String append_output_file) {
-        this.append_output_file = append_output_file.trim();
-        this.getAttrs().add("appendOutputFile");
+        if(append_output_file!=null){
+            this.append_output_file = append_output_file.trim();
+            this.getAttrs().add("appendOutputFile");
+        }
     }
 
     public boolean isAppendOutputFile() {
@@ -368,8 +394,10 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
      */
     @Override
     public void setFileExtension(String fileExtension) {
-        this.fileExtension = fileExtension.trim();
-        this.getAttrs().add("file_extension");
+        if(fileExtension!=null){
+            this.fileExtension = fileExtension.trim();
+            this.getAttrs().add("file_extension");
+        }
     }
     
     @Override
@@ -379,8 +407,10 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
 
     @Override
     public void setRegexBasePath(String regexBasePath) {
-        this.regexBasePath = regexBasePath.trim();
-        this.getAttrs().add("regexBasePath");
+        if(regexBasePath!=null){
+            this.regexBasePath = regexBasePath.trim();
+            this.getAttrs().add("regexBasePath");
+        }
     }
 
     @Override
@@ -390,8 +420,10 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
 
     @Override
     public void setFactModel(String val) {
-        this.factModel = val.trim();
-        this.getAttrs().add("fact_model");
+        if(val!=null){
+            this.factModel = val.trim();
+            this.getAttrs().add("fact_model");
+        }
     }
 
     @Override
@@ -401,8 +433,10 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
 
     @Override
     public void setNewspaper(String val) {
-        this.newspaper = val.trim();
-        this.getAttrs().add("newspaper");
+        if(val!=null){
+            this.newspaper = val.trim();
+            this.getAttrs().add("newspaper");
+        }
     }
 
 
@@ -413,8 +447,10 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
 
     @Override
     public void setOcrEngineModel(String val) {
-        this.ocrEngineModel = val.trim();
-        this.getAttrs().add("ocr_engine_model");
+        if(val!=null){
+            this.ocrEngineModel = val.trim();
+            this.getAttrs().add("ocr_engine_model");
+        }
     }
     
     @Override
@@ -423,6 +459,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     }
 
 
+    @JsonSetter(value = "parseModel")
     @Override
     public void setParseModel(String[] parse_model) {
         this.parseModel = parse_model;
@@ -430,8 +467,10 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     }
     
     public void setParseModel(String parse_model) {
-        this.s_parseModel = parse_model.trim();
-        setParseModel(getStringArray(parse_model));
+        if(parse_model!=null){
+            this.s_parseModel = parse_model.trim();
+            setParseModel(getStringArray(parse_model));
+        }
     }    
 
     @Override
@@ -440,10 +479,13 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     }
 
     public void setTargetfragmentBreakerProxyPackagesToSearch(String packages) {
-        this.strTargetFragmentBreakerProxyPackagesToSearch=packages.trim();
-        setTargetfragmentBreakerProxyPackagesToSearch(getStringArray(packages));
+        if(packages!=null){
+            this.strTargetFragmentBreakerProxyPackagesToSearch=packages.trim();
+            setTargetfragmentBreakerProxyPackagesToSearch(getStringArray(packages));
+        }
     }
 
+    @JsonSetter(value = "targetFragmentBreakerProxyPackagesToSearch")
     @Override
     public void setTargetfragmentBreakerProxyPackagesToSearch(String[] packages) {
         this.targetFragmentBreakerProxyPackagesToSearch = packages;
@@ -456,8 +498,10 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     }
 
     public void setExtractorApproach(String a) {
-        this.extractorApproach=a.trim();
-        this.getAttrs().add("extractor_approach");
+        if(a!=null){
+            this.extractorApproach=a.trim();
+            this.getAttrs().add("extractor_approach");
+        }
     }
 
 
@@ -468,8 +512,10 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
 
     @Override
     public void setFragmentBreakerApproach(String approach) {
-        this.fragmentBreakerApproach = approach.trim();
-        this.getAttrs().add("fragment_breaker_approach");
+        if(approach!=null){
+            this.fragmentBreakerApproach = approach.trim();
+            this.getAttrs().add("fragment_breaker_approach");
+        }
     }
 
     @Override
@@ -477,6 +523,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         return this.informationUnitBuilderProxyPackagesToSearch;
     }
 
+    @JsonSetter("informationUnitBuilderProxyPackagesToSearch")
     @Override
     public void setInformationUnitBuilderProxyPackagesToSearch(String[] packages) {
         this.informationUnitBuilderProxyPackagesToSearch = packages;
@@ -484,8 +531,10 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     }
 
     public void setInformationUnitBuilderProxyPackagesToSearch(String packages) {
-        this.strInformationUnitBuilderProxyPackagesToSearch = packages.trim();
-        setInformationUnitBuilderProxyPackagesToSearch(getStringArray(packages));
+        if(packages!=null){
+            this.strInformationUnitBuilderProxyPackagesToSearch = packages.trim();
+            setInformationUnitBuilderProxyPackagesToSearch(getStringArray(packages));
+        }
     }
 
     @Override
@@ -493,6 +542,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         return this.dataExtractProxyPackagesToSearch;
     }
 
+    @JsonSetter("dataExtractProxyPackagesToSearch")
     @Override
     public void setDataExtractProxyPackagesToSearch(String[] packages) {
         this.dataExtractProxyPackagesToSearch= packages;
@@ -500,8 +550,10 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     }
 
     public void setDataExtractProxyPackagesToSearch(String packages) {
-        this.strDataExtractProxyPackagesToSearch = packages.trim();
-        this.setDataExtractProxyPackagesToSearch(getStringArray(packages));
+        if(packages!=null){
+            this.strDataExtractProxyPackagesToSearch = packages.trim();
+            this.setDataExtractProxyPackagesToSearch(getStringArray(packages));
+        }
     }
 
     @Override
@@ -509,6 +561,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         return this.dataExtractCalculatorBuilderProxyPackagesToSearch;
     }
 
+    @JsonSetter("dataExtractCalculatorBuilderProxyPackagesToSearch")
     @Override
     public void setDataExtractCalculatorBuilderPackagesToSearch(String[] packages) {
         this.dataExtractCalculatorBuilderProxyPackagesToSearch=packages;
@@ -516,8 +569,10 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     }
 
     public void setDataExtractCalculatorBuilderPackagesToSearch(String packages) {
-        this.strDataExtractCalculatorBuilderProxyPackagesToSearch=packages.trim();
-        this.setDataExtractCalculatorBuilderPackagesToSearch(getStringArray(packages));
+        if(packages!=null){
+            this.strDataExtractCalculatorBuilderProxyPackagesToSearch=packages.trim();
+            this.setDataExtractCalculatorBuilderPackagesToSearch(getStringArray(packages));
+        }
     }
 
     /**
@@ -533,14 +588,18 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
      */
     @Override
     public void setParserConfigJsonFile(String parserConfigJsonFile) {
-        this.parserConfigJsonFile = parserConfigJsonFile.trim();
-        this.getAttrs().add("parser_config_json_file");        
+        if(parserConfigJsonFile!=null){
+            this.parserConfigJsonFile = parserConfigJsonFile.trim();
+            this.getAttrs().add("parser_config_json_file");        
+        }
     }
     
     protected void setInitConfigFile(String iniConfigFile) {
-        this.strinitConfigFile = iniConfigFile.trim();   
-        this.setInitConfigFile(getFile(iniConfigFile));
-        this.getAttrs().add("init_config_file");        
+        if(iniConfigFile!=null){
+            this.strinitConfigFile = iniConfigFile.trim();   
+            this.setInitConfigFile(getFile(iniConfigFile));
+            this.getAttrs().add("init_config_file");        
+        }
     }    
 
     @Override
@@ -549,10 +608,14 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     }
 
     private void setRunForDebugging(String string) {
-        setRunForDebugging(getBoolean(string.trim()));
+        if(string!=null){
+            setRunForDebugging(getBoolean(string.trim()));
+        }
     }
     
-    private void setRunForDebugging(Boolean v) {
+    @JsonSetter("runForDebugging")
+    @Override
+    public void setRunForDebugging(Boolean v) {
         this.runForDebugging=v;
         this.getAttrs().add("run_for_debugging");        
 
@@ -568,10 +631,42 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         }
     }
     
+    @JsonSetter("quantityOfCharactersToCompare")
     private void setQuantityOfCharactersToCompare(Integer v) {
         this.quantityOfCharactersToCompare=v;
         this.getAttrs().add("quantity_of_characters_to_compare");        
 
     }
-    
+
+    /**
+     * @return the informationUnitBuilderType
+     */
+    @Override
+    public String getInformationUnitBuilderType() {
+        return informationUnitBuilderType;
+    }
+
+    /**
+     * @param informationUnitBuilderType the informationUnitBuilderType to set
+     */
+    private void setInformationUnitBuilderType(String informationUnitBuilderType) {
+        this.informationUnitBuilderType = informationUnitBuilderType;
+        this.getAttrs().add("informationUnitBuilderType");        
+    }
+
+    /**
+     * @return the metadataSource
+     */
+    @Override
+    public String getMetadataSource() {
+        return metadataSource;
+    }
+
+    /**
+     * @param metadataSource the metadataSource to set
+     */
+    public void setMetadataSource(String metadataSource) {
+        this.metadataSource = metadataSource;
+        this.getAttrs().add("metadataSource");        
+    }
 }

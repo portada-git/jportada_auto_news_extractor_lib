@@ -5,6 +5,7 @@ import java.util.List;
 import org.elsquatrecaps.autonewsextractor.model.PublicationInfo;
 import org.elsquatrecaps.autonewsextractor.tools.configuration.Configurable;
 import org.elsquatrecaps.autonewsextractor.tools.configuration.InformationUnitBuilderrConfiguration;
+import org.elsquatrecaps.utilities.iterators.ConsumerIterator;
 import org.elsquatrecaps.utilities.proxies.ProxyByAnnotationsBuilder;
 import org.elsquatrecaps.utilities.tools.Callback;
 import org.elsquatrecaps.utilities.tools.configuration.Configuration;
@@ -21,7 +22,6 @@ public class InfromationUnitBuilderProxyClass implements InformationUnitBuilder{
         builder = new ProxyByAnnotationsBuilder<>(InformationUnitBuilder.class, InformationUnitBuilderMarkerAnnotation.class, searchPackages);
         builder.updateClassMap();
     }
-    
     
     private final InformationUnitBuilder informationUnitBuilder;
     
@@ -81,6 +81,31 @@ public class InfromationUnitBuilderProxyClass implements InformationUnitBuilder{
     }
 
     @Override
+    public void createAndProcessEachInformationUnitFiles(
+            Callback<InformationUnitDataParamsFromFilesForCallback, Void> callbak,
+            ConsumerIterator<DataToProcess> iterator,
+            String modelVersion) {
+        informationUnitBuilder.createAndProcessEachInformationUnitFiles(callbak, iterator, modelVersion);
+    }
+
+    @Override
+    public void createAndProcessEachInformationUnitFiles(
+            Callback<InformationUnitDataParamsFromFilesForCallback, Void> callbak,
+            String originDir,
+            String modelVersion) {
+        informationUnitBuilder.createAndProcessEachInformationUnitFiles(callbak, originDir, modelVersion);
+    }
+
+    @Override
+    public void createAndProcessEachInformationUnitFiles(
+            Callback<InformationUnitDataParamsFromFilesForCallback, Void> callbak,
+            String originDir,
+            String extension,
+            String modelVersion) {
+        informationUnitBuilder.createAndProcessEachInformationUnitFiles(callbak, originDir, extension, modelVersion);
+    }
+
+    @Override
     public void createAndProcessEachInformationUnitFiles(Callback<InformationUnitDataParamsFromFilesForCallback, Void> callbak,
             PublicationInfo publicationInfo) {
         informationUnitBuilder.createAndProcessEachInformationUnitFiles(callbak, publicationInfo);
@@ -104,6 +129,21 @@ public class InfromationUnitBuilderProxyClass implements InformationUnitBuilder{
     @Override
     public String readFileAndGetText(List<String> file) {
         return informationUnitBuilder.readFileAndGetText(file);
+    }
+
+    @Override
+    public String getText(String text) {
+        return informationUnitBuilder.getText(text);
+    }
+
+    @Override
+    public String getText(String[] text) {
+        return informationUnitBuilder.getText(text);
+    }
+
+    @Override
+    public String getText(List<String> text) {
+        return informationUnitBuilder.getText(text);
     }
 
 }

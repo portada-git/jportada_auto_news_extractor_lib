@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 import org.elsquatrecaps.autonewsextractor.tools.RegexBuilder;
 import org.elsquatrecaps.autonewsextractor.tools.configuration.RegexConfiguration;
 import org.elsquatrecaps.utilities.tools.configuration.Configuration;
-import org.slf4j.helpers.MessageFormatter;
 import org.elsquatrecaps.autonewsextractor.tools.configuration.TargetFragmentCutterConfiguration;
 
 /**

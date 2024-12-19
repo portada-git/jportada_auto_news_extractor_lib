@@ -11,6 +11,7 @@ import org.elsquatrecaps.autonewsextractor.tools.configuration.Configurable;
  * @author josep
  */
 public interface TargetFragmentCutter extends Configurable<TargetFragmentCutter>{
+    @Override
     <Object> TargetFragmentCutter init(Object v);
     String getTargetTextFromText(String bonText);
 }

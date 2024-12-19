@@ -22,7 +22,7 @@ public class MainAutoNewsExtractorParser extends MainExtractorParser<NewsExtract
     
     public static MainAutoNewsExtractorParser getInstance(Configuration conf, JSONObject jsonConfig){
         MainAutoNewsExtractorParser ret = new MainAutoNewsExtractorParser();
-        ret.init(conf).init(jsonConfig);
+        ret.init(jsonConfig).init(conf);
         return ret;
     }
     

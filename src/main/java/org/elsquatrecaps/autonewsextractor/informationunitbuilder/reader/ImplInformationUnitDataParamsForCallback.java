@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package org.elsquatrecaps.autonewsextractor.informationunitbuilder.reader;
 
 import java.util.ArrayList;
@@ -19,17 +15,27 @@ public class ImplInformationUnitDataParamsForCallback implements InformationUnit
     private boolean error = false;
     private PublicationInfo publicationInfo;
     private String text;
+    private String informationUnitName;
     private List<String> files;
+    private float completedRatio; 
     private Exception exception = null;
 
-    public ImplInformationUnitDataParamsForCallback(PublicationInfo publicationInfo, String text, List<String> filesOrigin /*, Configuration configuration*/ ) {
+    public ImplInformationUnitDataParamsForCallback(
+            PublicationInfo publicationInfo, 
+            String text, 
+            String name, 
+            List<String> filesOrigin,
+            float completedRatio
+            /*, Configuration configuration*/ ) {
         this.publicationInfo = publicationInfo;
         this.files = filesOrigin;
         this.text = text;
+        this.informationUnitName = name;
+        this.completedRatio=completedRatio; 
     } /*, Configuration configuration*/
 
-    public ImplInformationUnitDataParamsForCallback(PublicationInfo publicationInfo, String text /*, Configuration configuration*/ ) {
-        this(publicationInfo, text, new ArrayList<>() /*, configuration*/ );
+    public ImplInformationUnitDataParamsForCallback(PublicationInfo publicationInfo, String text, String name,  float completedRatio /*, Configuration configuration*/ ) {
+        this(publicationInfo, text, name, new ArrayList<>(), completedRatio /*, configuration*/ );
     } /*, Configuration configuration*/ /*, configuration*/
 
     public ImplInformationUnitDataParamsForCallback(Exception ex) {
@@ -69,6 +75,21 @@ public class ImplInformationUnitDataParamsForCallback implements InformationUnit
     @Override
     public PublicationInfo getPublicationInfo() {
         return publicationInfo;
+    }
+
+    /**
+     * @return the informationUnitName
+     */
+    @Override
+    public String getInfomationUnitName() {
+        return informationUnitName;
+    }
+
+    /**
+     * @return the completedRatio
+     */
+    public float getCompletedRatio() {
+        return completedRatio;
     }
     
 }

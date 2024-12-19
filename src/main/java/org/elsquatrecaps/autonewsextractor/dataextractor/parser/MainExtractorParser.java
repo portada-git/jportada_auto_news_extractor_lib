@@ -39,7 +39,7 @@ public class MainExtractorParser<E extends ExtractedData> implements ExtractorPa
     
     public static MainExtractorParser getInstance(Configuration conf, JSONObject jsonConfig){
         MainExtractorParser ret = new MainAutoNewsExtractorParser();
-        ret.init(conf).init(jsonConfig);
+        ret.init(jsonConfig).init(conf);
         return ret;
     }
     

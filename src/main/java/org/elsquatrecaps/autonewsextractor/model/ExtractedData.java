@@ -1,14 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package org.elsquatrecaps.autonewsextractor.model;
+
+import java.io.Serializable;
 
 /**
  *
  * @author josep
  */
-public interface ExtractedData extends Cloneable{
+public interface ExtractedData extends Cloneable, Serializable{
     String MODEL_VERSION_FIELD_NAME = "model_version";
     String RAW_TEXT_FIELD_NAME = "raw_text";
     String PARSED_TEXT_FIELD_NAME = "parsed_text";

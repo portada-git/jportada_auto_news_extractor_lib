@@ -21,5 +21,7 @@ public interface RegexConfiguration extends ParserConfiguration{
     void setRegexBasePath(String val);
 
     void setOcrEngineModel(String val);
+    
+    void setRunForDebugging(Boolean val);
         
 }

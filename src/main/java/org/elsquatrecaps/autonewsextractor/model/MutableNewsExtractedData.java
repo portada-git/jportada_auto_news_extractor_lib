@@ -2,7 +2,6 @@ package org.elsquatrecaps.autonewsextractor.model;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import org.json.JSONArray;
 import org.json.JSONObject;

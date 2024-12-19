@@ -9,6 +9,15 @@ import java.util.regex.Pattern;
  * @author josepcanellas
  */
 public abstract class AbstractReader implements FactReader{
+    private String originDir;
+
+    public String getOriginDir() {
+        return originDir;
+    }
+
+    protected void setOriginDir(String originDir) {
+        this.originDir = originDir;
+    }
     
     @Override
     public String readFileAndGetText(String file) {
@@ -54,10 +63,10 @@ public abstract class AbstractReader implements FactReader{
 //    protected abstract void saveDataFromText(String bonText, Date date);
     
     protected String file2Text(String file){
-        String ret = this.prepareTextFromFile(file);
+        String ret = this.prepareTextFromFile(file, getOriginDir());
         return ret;
     }    
     
-    abstract protected String prepareTextFromFile(String file);
+    abstract protected String prepareTextFromFile(String file, String originDir);
     
 }
