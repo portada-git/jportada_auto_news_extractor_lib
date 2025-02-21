@@ -92,8 +92,11 @@ public class RegexExtractorParser<E extends ExtractedData> implements ExtractorP
                 proxy.init(ExtraDataCalculatorEnum.EXTRACTED_DATA.toString(), parseddata);
                 proxy.init(ExtraDataCalculatorEnum.LAST_EXTRACTED_DATA, lastExtracted);
                 proxy.init(ExtraDataCalculatorEnum.CONSTANTS.toString(), constants);
-                String value = proxy.calculate(fieldsToCalculate.getJSONObject(i));
-                parseddata.setCalculateValue(fieldsToCalculate.getJSONObject(i).getString("key"), value.trim());
+                Object value = proxy.calculate(fieldsToCalculate.getJSONObject(i));
+                if(value instanceof String){
+                    value = ((String) value).trim();
+                }
+                parseddata.setCalculateValue(fieldsToCalculate.getJSONObject(i).getString("key"), value);
             }        
         }
         return parseddata;
@@ -125,12 +128,6 @@ public class RegexExtractorParser<E extends ExtractedData> implements ExtractorP
             parseddata.setUnparsedText(textUnparsed);
             ret.add((E) parseddata);
             printForDebbuging(textParsed, textUnparsed, parseddata);
-//            if(configuration instanceof DevelopmentConfiguration && ((DevelopmentConfiguration)configuration).getRunForDebugging()){
-//                System.out.println(String.format("Parsed text: \"%s\"\n\n--------------\n", textParsed));
-//                System.out.println(String.format("Unparsed text: \"%s\"\n\n--------------\n", textUnparsed));
-//                System.out.println(parseddataToStringForDebugging(parseddata));
-//                System.out.println("\n\n--------------\n");
-//            }
             for(int i=0; i<fieldsToExtract.length(); i++){
                 if(!fieldsToExtract.getJSONObject(i).has("copy_last_value") || fieldsToExtract.getJSONObject(i).getBoolean("copy_last_value")){
                     partialExtractedDataToCopy.setCalculateValue(

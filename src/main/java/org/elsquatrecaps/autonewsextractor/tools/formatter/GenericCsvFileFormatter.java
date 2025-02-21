@@ -32,6 +32,7 @@ public /*abstract*/ class GenericCsvFileFormatter<T extends MutableNewsExtracted
     private JSONArray headerFields;
     private MultiValuesType multipleValuesAS = MultiValuesType.AS_LIST;
     private String fieldSeparator = ",";
+    private String singleListSeparator=",";
     
     public GenericCsvFileFormatter format(T... fact){
         getList().addAll((Collection<? extends T>) Arrays.asList(fact));
@@ -93,6 +94,75 @@ public /*abstract*/ class GenericCsvFileFormatter<T extends MutableNewsExtracted
 //        return listOfFacts;
 //    }
     
+    private String getStructuredValue(Object value, MutableNewsExtractedData fact){
+        String ret;
+        value = fact.getObjectValue(value);
+        if(value instanceof JSONArray || value instanceof  Collection){
+            ret = getListValue(value, fact);
+        }else if(value instanceof JSONObject || value instanceof Map){
+            ret = getMapValue(value, fact);
+            singleListSeparator="; ";
+        }else{
+            ret = (value==null?"":value).toString().replaceAll("[{}\\[\\]\"]", "");
+        }
+        return ret;
+    }
+            
+    private String getListValue(Object value, MutableNewsExtractedData fact){
+        StringBuilder stringValue = new StringBuilder();
+        value = fact.getObjectValue(value);
+        if(value instanceof JSONArray){
+            for(int j=0; j<((JSONArray)value).length(); j++){
+                if (j>0){
+                    stringValue.append(singleListSeparator);
+                }
+                stringValue.append(getStructuredValue(((JSONArray) value).get(j), fact));                                
+            }
+        }else if(value instanceof Collection){
+            boolean notFirst=false;
+            for(Object item: (Collection)value){
+                if (notFirst){
+                    stringValue.append(", ");
+                }else{
+                    notFirst=true;
+                }
+                stringValue.append(getStructuredValue(item, fact));                                
+            }                            
+        }else{
+            stringValue.append(value==null?"":value.toString().replaceAll("[\\[\\]\"]", ""));
+        }   
+        return stringValue.toString();
+    }
+            
+    private String getMapValue(Object value, MutableNewsExtractedData fact){
+        StringBuilder stringValue = new StringBuilder();
+        value = fact.getObjectValue(value);
+        if(value instanceof JSONObject){            
+            boolean notFirst=false;
+            for(String key: ((JSONObject) value).keySet()){
+                if (notFirst){
+                    stringValue.append(", ");
+                }else{
+                    notFirst=true;
+                }
+                stringValue.append(getStructuredValue(((JSONObject) value).get(key), fact));                                
+            }
+        }else if(value instanceof Map){
+            boolean notFirst=false;
+            for(Object key: ((Map) value).keySet()){
+                if (notFirst){
+                    stringValue.append(", ");
+                }else{
+                    notFirst=true;
+                }
+                stringValue.append(getStructuredValue(((Map) value).get(key), fact));                                
+            }
+        }else{
+            stringValue.append((value==null?"":value).toString().replaceAll("[{}\"]", ""));
+        }
+        return stringValue.toString();
+    }
+            
     private FactDataAsString factToFactDataAsString(MutableNewsExtractedData fact, JSONArray headerFields){
         FactDataAsString ret = new FactDataAsString();
         StringBuilder row = new StringBuilder();
@@ -112,22 +182,40 @@ public /*abstract*/ class GenericCsvFileFormatter<T extends MutableNewsExtracted
                         }
                     }
                     row.append(strb.toString());
-                }else if(jobj.has("composed_by")){
-//                    if(multipleValuesAS.equals(multipleValuesAS.AS_LIST)){
-//                        row.append(factToString(fact.getExtractedData().getJSONArray(jobj.getString("field")), jobj.getJSONArray("composed_by")));
-//                    }else{
+                }else if(type.equals("list")){
+                    if(multipleValuesAS.equals(multipleValuesAS.AS_LIST)){
+                        if(jobj.optString("style", "").equals("single")){
+                            singleListSeparator = ", ";
+                            row.append(getListValue(fact.getObject(jobj.getString("field")), fact));
+                        }else{
+                            row.append(getFormatedValue(jobj.getString("field"), fact));
+                        }                    
+                    }else{
 //                        String id = String.format("%s%02d", jobj.getString("field"), i);
 //                        row.append(id);
 //                        ret.putOtherTables(jobj.getString("field"), factToListOfFactDataAsString(id, fact.getExtractedData().getJSONArray(jobj.getString("field")), headerFields));
-//                    }
+                    }
+                }else if(type.equals("composed")){
+                    if(multipleValuesAS.equals(multipleValuesAS.AS_LIST)){
+                        if(jobj.optString("style", "").equals("single")){
+                            Object o = fact.getObject(jobj.getString("field"));
+                            row.append(getMapValue(fact.getObject(jobj.getString("field")), fact));
+                        }else{
+                            row.append(getFormatedValue(jobj.getString("field"), fact));
+                        }
+                    }else{
+//                        String id = String.format("%s%02d", jobj.getString("field"), i);
+//                        row.append(id);
+//                        ret.putOtherTables(jobj.getString("field"), factToListOfFactDataAsString(id, fact.getExtractedData().getJSONArray(jobj.getString("field")), headerFields));
+                    }                                        
                 }else{
-//                    row.append(fact.getString(jobj.getString("field")));
+//                    stringValue.append(fact.getString(jobj.getString("field")));
                     row.append(getFormatedValue(jobj.getString("field"), fact));
                 }
                 row.append(getPrePost(jobj.optString("type", "")));
             }else if(obj!=null){
                 row.append(getPrePost(""));
-//                row.append(fact.getString(obj.toString()));
+//                stringValue.append(fact.getString(obj.toString()));
                 row.append(getFormatedValue(obj.toString(), fact));
                 row.append(getPrePost(""));
             }else{
@@ -193,7 +281,7 @@ public /*abstract*/ class GenericCsvFileFormatter<T extends MutableNewsExtracted
     }    
     
     protected String getFormatedValue(String field, MutableNewsExtractedData fact){
-        return fact.get(field);
+        return fact.get(field).replaceAll("\\\"", "'").replaceAll("\n", "\\\\n");
     }
     
     private String getFieldName(Object headerField, String def){

@@ -13,7 +13,7 @@ import org.json.JSONObject;
  * @author josepcanellas
  */
 @SuppressWarnings("unchecked")
-public class DataExtractorCalculatorProxyClass implements AutoNewsExtractorCalculator<JSONObject, String>{
+public class DataExtractorCalculatorProxyClass implements AutoNewsExtractorCalculator<JSONObject, Object>{
     public static final String LITERAL_PARAMS = "literalParams";
     public static final String FIELD_PARAMS = "fieldParams";
     public static final String PARAMS = "params";
@@ -142,11 +142,11 @@ public class DataExtractorCalculatorProxyClass implements AutoNewsExtractorCalcu
 //    }
 
     @Override
-    public String calculate(JSONObject param) {
+    public Object calculate(JSONObject param) {
 //        int currentPos=0;
 //        int extraLength=0;
         Object[] params;
-        String ret;
+        Object ret;
 //        ConfigurableAutoNewsExtractorCalculator<Object, String> calc = getCalculator(param.getString("calculator"));
         AutoNewsExtractorCalculator<Object, String> calc = getCalculator(param.getString("calculator"));
         if(param.has("init_data")){
@@ -240,7 +240,7 @@ public class DataExtractorCalculatorProxyClass implements AutoNewsExtractorCalcu
     }
 
     @Override
-    public String call(JSONObject param) {
+    public Object call(JSONObject param) {
         return calculate(param);
     }
 

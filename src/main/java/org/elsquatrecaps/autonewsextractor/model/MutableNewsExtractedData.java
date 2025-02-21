@@ -38,7 +38,7 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
     }
     
     private void _set(String field, Object value){
-        if(isJsonStructuredValue(field)){
+        if(isJsonStructuredField(field)){
             _setOriginalValue(field, value);
         }else{
             extractedData.put(field, value);
@@ -60,7 +60,7 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
     private void _setOriginalValue(String field, Object value){
         JSONObject obj;
         if(hasValue(value)){
-            if(isJsonStructuredValue(field)){
+            if(isJsonStructuredField(field)){
                 obj = extractedData.getJSONObject(field);
             }else{
                 obj = new JSONObject();
@@ -70,7 +70,7 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
                 obj.remove(CALCULATED_VALUE_FIELD);
             }
             extractedData.put(field, obj);
-        }else if(isJsonStructuredValue(field)){
+        }else if(isJsonStructuredField(field)){
             obj = extractedData.getJSONObject(field);
             obj.remove(ORIGINAL_VALUE_FIELD);
             if(obj.has(CALCULATED_VALUE_FIELD)){
@@ -99,7 +99,7 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
     private void _setDefaultValue(String field, Object value){
         JSONObject obj;
         if(hasValue(value)){
-            if(isJsonStructuredValue(field)){
+            if(isJsonStructuredField(field)){
                 obj = extractedData.getJSONObject(field);
             }else{
                 if(extractedData.has(field)){
@@ -111,16 +111,16 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
             }
             obj.put(DEFAULT_VALUE_FIELD, value);
             extractedData.put(field, obj);
-        }else if(isJsonStructuredValue(field)){
+        }else if(isJsonStructuredField(field)){
             obj = extractedData.getJSONObject(field);
             obj.remove(DEFAULT_VALUE_FIELD);
         }
     }
     
-    public void setCalculateValue(String field, String value){
+    public void setCalculateValue(String field, Object value){
         JSONObject obj;
         if(hasValue(value)){
-            if(isJsonStructuredValue(field)){
+            if(isJsonStructuredField(field)){
                 obj = extractedData.getJSONObject(field);
             }else{
                 if(extractedData.has(field)){
@@ -132,7 +132,7 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
             }
             obj.put(CALCULATED_VALUE_FIELD, value);
             extractedData.put(field, obj);
-        }else if(isJsonStructuredValue(field)){
+        }else if(isJsonStructuredField(field)){
             obj = extractedData.getJSONObject(field);
             obj.remove(CALCULATED_VALUE_FIELD);
         }
@@ -172,6 +172,7 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
         this.setOriginalValue(UNPARSED_TEXT_FIELD_NAME, unparsedText);
     }
     
+    @Override
     public MutableNewsExtractedData clone() {
         return new MutableNewsExtractedData(this);
     }

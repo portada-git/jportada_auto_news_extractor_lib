@@ -1,6 +1,8 @@
 package org.elsquatrecaps.autonewsextractor.model;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -41,10 +43,10 @@ public class ImmutableNewsExtractedData implements NewsExtractedData {
         return ret;
     }
 
-    private String getDefaultValue(JSONObject jsonStructuredFieldValue) {
-        String ret = "";
+    private Object getDefaultObjectValue(JSONObject jsonStructuredFieldValue) {
+        Object ret = "";
         if (jsonStructuredFieldValue.has(DEFAULT_VALUE_FIELD)) {
-            ret = jsonStructuredFieldValue.getString(DEFAULT_VALUE_FIELD);
+            ret = jsonStructuredFieldValue.get(DEFAULT_VALUE_FIELD);
         }
         return ret;
     }
@@ -53,15 +55,15 @@ public class ImmutableNewsExtractedData implements NewsExtractedData {
     public String getCalculatedValue(String field) {
         String ret = "";
         if (extractedData.has(field) && (extractedData.get(field) instanceof JSONObject) && extractedData.getJSONObject(field).has(CALCULATED_VALUE_FIELD)) {
-            ret = extractedData.getJSONObject(field).getString(CALCULATED_VALUE_FIELD);
+            ret = extractedData.getJSONObject(field).get(CALCULATED_VALUE_FIELD).toString();
         }
         return ret;
     }
 
-    private String getCalculatedValue(JSONObject jsonStructuredFieldValue) {
-        String ret = "";
+    private Object getCalculatedObjectValue(JSONObject jsonStructuredFieldValue) {
+        Object ret = "";
         if (jsonStructuredFieldValue.has(CALCULATED_VALUE_FIELD)) {
-            ret = jsonStructuredFieldValue.getString(CALCULATED_VALUE_FIELD);
+            ret = jsonStructuredFieldValue.get(CALCULATED_VALUE_FIELD);
         }
         return ret;
     }
@@ -73,16 +75,18 @@ public class ImmutableNewsExtractedData implements NewsExtractedData {
             if (extractedData.get(field) instanceof String) {
                 ret = extractedData.getString(field);
             } else if ((extractedData.get(field) instanceof JSONObject) && extractedData.getJSONObject(field).has(ORIGINAL_VALUE_FIELD)) {
-                ret = extractedData.getJSONObject(field).getString(ORIGINAL_VALUE_FIELD);
+                ret = extractedData.getJSONObject(field).get(ORIGINAL_VALUE_FIELD).toString();
+            }else{
+                ret = extractedData.get(field).toString();
             }
         }
         return ret;
     }
-
-    private String getOriginalValue(JSONObject jsonStructuredFieldValue) {
-        String ret = "";
+    
+    private Object getOriginalObjectValue(JSONObject jsonStructuredFieldValue) {
+        Object ret = "";
         if (jsonStructuredFieldValue.has(ORIGINAL_VALUE_FIELD)) {
-            ret = jsonStructuredFieldValue.getString(ORIGINAL_VALUE_FIELD);
+            ret = jsonStructuredFieldValue.get(ORIGINAL_VALUE_FIELD);
         }
         return ret;
     }
@@ -90,24 +94,49 @@ public class ImmutableNewsExtractedData implements NewsExtractedData {
     @Override
     public String get(String field) {
         String ret;
-        ret = getCalculatedValue(field);
-        if (ret.isEmpty()) {
-            ret = getOriginalValue(field);
-            if (ret.isEmpty()) {
-                ret = getDefaultValue(field);
+        if(isJsonStructuredField(field)){
+            ret = getCalculatedValue(field);
+            if (isEmpty(ret)) {
+                ret = getOriginalValue(field);
+                if (isEmpty(ret)) {
+                    ret = getDefaultValue(field);
+                }
             }
+        }else{
+            ret = extractedData.get(field).toString();
         }
         return ret;
     }
-
-    private String getValue(Object value) {
-        String ret = value.toString();
+    
+    private boolean isEmpty(Object value){
+        boolean ret;
+        ret = value==null;
+        if (!ret && value instanceof String){
+            ret = ((String) value).isEmpty();
+        }else if(!ret && value instanceof JSONArray){
+            ret = ((JSONArray) value).isEmpty();
+        }else if(!ret && value instanceof JSONObject){
+            ret = ((JSONObject) value).isEmpty();
+        }else if(!ret && value instanceof Collection){
+            ret = ((Collection) value).isEmpty();
+        }else if(!ret && value instanceof Map){
+            ret = ((Map) value).isEmpty();
+        }
+        return ret; 
+    }
+    
+    public Object getObject(String field) {
+        return getObjectValue(extractedData.get(field));
+    }
+    
+    public Object getObjectValue(Object value) {
+        Object ret = value;
         if(isJsonStructuredValue(value)){
-            ret = getCalculatedValue((JSONObject)value);
-            if (ret.isEmpty()) {
-                ret = getOriginalValue((JSONObject)value);
-                if (ret.isEmpty()) {
-                    ret = getDefaultValue((JSONObject)value);
+            ret = getCalculatedObjectValue((JSONObject)value);
+            if (isEmpty(ret)) {
+                ret = getOriginalObjectValue((JSONObject)value);
+                if (isEmpty(ret)) {
+                    ret = getDefaultObjectValue((JSONObject)value);
                 }
             }
         }
@@ -119,7 +148,7 @@ public class ImmutableNewsExtractedData implements NewsExtractedData {
      */
     @Override
     public String getParsedText() {
-        return get(PARSED_TEXT_FIELD_NAME);
+        return (String) get(PARSED_TEXT_FIELD_NAME);
     }
 
     /**
@@ -127,7 +156,7 @@ public class ImmutableNewsExtractedData implements NewsExtractedData {
      */
     @Override
     public String getUnparsedText() {
-        return get(UNPARSED_TEXT_FIELD_NAME);
+        return (String) get(UNPARSED_TEXT_FIELD_NAME);
     }
     
     /**
@@ -160,6 +189,23 @@ public class ImmutableNewsExtractedData implements NewsExtractedData {
         return ret;
     }
     
+    private String getValueAsJsonString(Object value, String pre){
+        String ret = "";
+        Object objectValue = getObjectValue(value);
+        if(objectValue instanceof JSONArray){
+            ret = getOnlyOneValueForField((JSONArray) objectValue, pre);
+        }else if(objectValue instanceof JSONObject){
+            ret = getOnlyOneValueForFieldAsJson((JSONObject) objectValue, pre);
+        }else if (objectValue instanceof Boolean
+                || objectValue instanceof Number){
+            ret =  objectValue.toString();
+        }else{
+            String v = (objectValue==null?"":objectValue.toString()).replaceAll("\n", "\\\\n").replaceAll("\\\"", "'");
+            ret = ret.concat("\"").concat(v).concat("\"");
+        }
+        return ret;
+    }
+    
     private String getOnlyOneValueForFieldAsJson(JSONObject jobject, String pre){
         String post = "";
         StringBuilder strb = new StringBuilder();
@@ -173,19 +219,20 @@ public class ImmutableNewsExtractedData implements NewsExtractedData {
             strb.append("\"");
             strb.append(key);
             strb.append("\": ");
-            if(isJsonStructuredValue(jobject.get(key))){
-                strb.append("\"");
-                strb.append(getValue(jobject.getJSONObject(key)).replaceAll("\n", "\\\\n").replaceAll("\\\"", "'"));
-                strb.append("\"");
-            }else if(jobject.get(key) instanceof JSONObject){
-                strb.append(getOnlyOneValueForFieldAsJson(jobject.getJSONObject(key), insidePre));
-            }else if(jobject.get(key) instanceof JSONArray){
-                strb.append(getOnlyOneValueForField(jobject.getJSONArray(key), insidePre));
-            }else{
-                strb.append("\"");
-                strb.append(getValue(jobject.get(key)).replaceAll("\n", "\\\\n").replaceAll("\\\"", "'"));
-                strb.append("\"");
-            }
+            strb.append(getValueAsJsonString(getObjectValue(jobject.get(key)), insidePre));            
+//            if(isJsonStructuredValue(jobject.get(key))){                
+//                strb.append("\"");
+//                strb.append(getObjectValue(jobject.getJSONObject(key)).replaceAll("\n", "\\\\n").replaceAll("\\\"", "'"));
+//                strb.append("\"");
+//            }else if(jobject.get(key) instanceof JSONObject){
+//                strb.append(getOnlyOneValueForFieldAsJson(jobject.getJSONObject(key), insidePre));
+//            }else if(jobject.get(key) instanceof JSONArray){
+//                strb.append(getOnlyOneValueForField(jobject.getJSONArray(key), insidePre));
+//            }else{
+//                strb.append("\"");
+//                strb.append(getValue(jobject.get(key)).replaceAll("\n", "\\\\n").replaceAll("\\\"", "'"));
+//                strb.append("\"");
+//            }
         }
         strb.append("\n");
         strb.append(pre);
@@ -202,15 +249,16 @@ public class ImmutableNewsExtractedData implements NewsExtractedData {
             strb.append(post);
             post = ",\n";
             strb.append(insidePre);
-            if(isJsonStructuredValue(jarray.get(i))){
-                strb.append(getValue(jarray.getJSONObject(i)));
-            }else if(jarray.get(i) instanceof JSONObject){
-                strb.append(getOnlyOneValueForFieldAsJson(jarray.getJSONObject(i), insidePre));
-            }else if(jarray.get(i) instanceof JSONArray){
-                strb.append(getOnlyOneValueForField(jarray.getJSONArray(i), insidePre));
-            }else{
-                strb.append(getValue(jarray.get(i)));
-            }
+            strb.append(getValueAsJsonString(jarray.get(i),insidePre));
+//            if(isJsonStructuredValue(jarray.get(i))){
+//                strb.append(getValueAsJsonString(jarray.getJSONObject(i),insidePre));
+//            }else if(jarray.get(i) instanceof JSONObject){
+//                strb.append(getOnlyOneValueForFieldAsJson(jarray.getJSONObject(i), insidePre));
+//            }else if(jarray.get(i) instanceof JSONArray){
+//                strb.append(getOnlyOneValueForField(jarray.getJSONArray(i), insidePre));
+//            }else{
+//                strb.append(getValueAsJsonString(jarray.get(i),insidePre));
+//            }
         }
         strb.append("\n");
         strb.append(pre);
@@ -262,7 +310,7 @@ public class ImmutableNewsExtractedData implements NewsExtractedData {
         return ret;
     }
     
-    protected boolean isJsonStructuredValue(String field){
+    protected boolean isJsonStructuredField(String field){
         return extractedData.has(field) 
                 && (extractedData.get(field) instanceof JSONObject) 
                 && (extractedData.getJSONObject(field).has(DEFAULT_VALUE_FIELD)
