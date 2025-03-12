@@ -19,5 +19,6 @@ public interface InformationUnitBuilderrConfiguration extends Configuration{
     void setTargetfragmentBreakerProxyPackagesToSearch(String[] packages);
     String getInformationUnitBuilderType();
     String getMetadataSource();
+    String getCostCenter();
             
 }

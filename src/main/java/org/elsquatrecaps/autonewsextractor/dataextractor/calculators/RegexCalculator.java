@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package org.elsquatrecaps.autonewsextractor.dataextractor.calculators;
 
 import org.elsquatrecaps.autonewsextractor.tools.configuration.RegexConfiguration;
@@ -10,10 +6,9 @@ import org.elsquatrecaps.utilities.tools.configuration.Configuration;
 /**
  *
  * @author josep
- * @param <P>
  * @param <R>
  */
-public abstract class RegexCalculator<P,R> extends AbstractCalculator<P, R>{
+public abstract class RegexCalculator<R> extends AbstractCalculator<R>{
     private String basePath;
     private String searchPath;
     private String variant;

@@ -118,6 +118,10 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
     }
     
     public void setCalculateValue(String field, Object value){
+        setCalculateValue(field, value, false);
+    }
+    
+    public void setCalculateValue(String field, Object value, boolean removeIfEmpty){
         JSONObject obj;
         if(hasValue(value)){
             if(isJsonStructuredField(field)){
@@ -132,7 +136,7 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
             }
             obj.put(CALCULATED_VALUE_FIELD, value);
             extractedData.put(field, obj);
-        }else if(isJsonStructuredField(field)){
+        }else if(removeIfEmpty && isJsonStructuredField(field)){
             obj = extractedData.getJSONObject(field);
             obj.remove(CALCULATED_VALUE_FIELD);
         }

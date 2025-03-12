@@ -8,19 +8,19 @@ import org.json.JSONObject;
  * @author josep
  */
 @DataExtractorCalculatorMarkerAnnotation(id = "DataFromConstantMapAndConfigKeyCalculator")
-public class DataFromConstantMapAndConfigKeyCalculator extends AbstractCalculator<String[], String>{
+public class DataFromConstantMapAndConfigKeyCalculator extends AbstractCalculator<String>{
     public static final int CONSTANT_MAP_KEY=0;
     public static final int CONFIG_ATTR=1;
 
     @Override
-    public String calculate(String[] params) {
+    public String calculate(Object[] params) {
         String constantMapKey;
         String configAttr;
         String ret=null;
         JSONObject constantMap;
         String configValue;
-        constantMapKey = params[CONSTANT_MAP_KEY];
-        configAttr = params[CONFIG_ATTR];
+        constantMapKey = (String) params[CONSTANT_MAP_KEY];
+        configAttr = (String) params[CONFIG_ATTR];
         constantMap = getConstants().optJSONObject(constantMapKey);
         if(constantMap!=null){
             configValue = getConfiguration().getAttr(configAttr);

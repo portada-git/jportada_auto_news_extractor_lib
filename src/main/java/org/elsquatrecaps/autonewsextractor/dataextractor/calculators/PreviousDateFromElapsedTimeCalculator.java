@@ -5,17 +5,13 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import org.elsquatrecaps.autonewsextractor.dataextractor.calculators.DataExtractorCalculatorMarkerAnnotation;
-import org.elsquatrecaps.autonewsextractor.dataextractor.calculators.DataExtractorCalculatorMarkerAnnotation;
-import org.elsquatrecaps.autonewsextractor.dataextractor.calculators.RegexCalculator;
-import org.elsquatrecaps.autonewsextractor.dataextractor.calculators.RegexCalculator;
 
 /**
  *
  * @author josep
  */
 @DataExtractorCalculatorMarkerAnnotation(id = "PreviousDateFromElapsedTimeCalculator")
-public class PreviousDateFromElapsedTimeCalculator extends RegexCalculator<String[], String>{
+public class PreviousDateFromElapsedTimeCalculator extends RegexCalculator<String>{
     public static final int ELAPSED_TIME=0;
     public static final int ELAPSED_TIME_UNIT=1;
     public static final int DATE=2;
@@ -23,24 +19,24 @@ public class PreviousDateFromElapsedTimeCalculator extends RegexCalculator<Strin
     
 
     @Override
-    public String calculate(String[] params) {
+    public String calculate(Object[] params) {
         String ret="";
         Date date;
         try {
-            if(params.length<4 || params[DATE_FORMAT].isEmpty()){
+            if(params.length<4 || ((String)params[DATE_FORMAT]).isEmpty()){
                 SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd"); 
                 try{
-                    date = formater.parse(params[DATE]);
+                    date = formater.parse(((String)params[DATE]));
                 }catch(ParseException ex){
-                    date = new Date(Long.parseLong(params[DATE]));
+                    date = new Date(Long.parseLong(((String)params[DATE])));
                 }
             }else{
-                SimpleDateFormat formater = new SimpleDateFormat(params[DATE_FORMAT]);            
-                date = formater.parse(params[DATE]);
+                SimpleDateFormat formater = new SimpleDateFormat(((String)params[DATE_FORMAT]));
+                date = formater.parse(((String)params[DATE]));
             }
             Instant instant = Instant.ofEpochMilli(date.getTime());
-            int intBackTime=Integer.parseInt(params[ELAPSED_TIME]);
-            if(params[ELAPSED_TIME_UNIT]!=null && params[ELAPSED_TIME_UNIT].toLowerCase().startsWith("h")){
+            int intBackTime=Integer.parseInt(((String)params[ELAPSED_TIME]));
+            if(params[ELAPSED_TIME_UNIT]!=null && ((String)params[ELAPSED_TIME_UNIT]).toLowerCase().startsWith("h")){
                 instant = instant.minus(intBackTime, ChronoUnit.HOURS);
             }else{
                 instant = instant.minus(intBackTime, ChronoUnit.DAYS);

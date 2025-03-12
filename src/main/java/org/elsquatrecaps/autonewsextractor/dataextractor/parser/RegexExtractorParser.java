@@ -38,6 +38,7 @@ public class RegexExtractorParser<E extends ExtractedData> implements ExtractorP
     JSONArray fieldsToExtract;
     JSONArray fieldsToCalculate;
     JSONObject constants;
+    E lastParsed=null;
     
     @Override
     public void init(Configuration configuration, int parserId) {
@@ -69,6 +70,11 @@ public class RegexExtractorParser<E extends ExtractedData> implements ExtractorP
         this.maxGroups = jsonConfig.getInt("max_groups");
         this.fieldsToExtract = jsonConfig.getJSONArray("fields_to_extract");
         this.fieldsToCalculate = jsonConfig.optJSONArray("fields_to_calculate");
+    }
+    
+    @Override
+    public void setLastParsed(E parsedList){
+        this.lastParsed = parsedList;
     }
     
     protected MutableNewsExtractedData parseDataFromMatcher(Matcher matcher, MutableNewsExtractedData partialExtracted, ImmutableNewsExtractedData lastExtracted){
@@ -151,15 +157,6 @@ public class RegexExtractorParser<E extends ExtractedData> implements ExtractorP
         return ret;
     }
 
-    @Override
-    public MutableNewsExtractedData getDefaultData(ImmutableNewsExtractedData defData) {
-        MutableNewsExtractedData ret = new MutableNewsExtractedData(defData);
-        for(int i=0; i<fieldsToExtract.length(); i++){
-            ret.setDefaultValue(fieldsToExtract.getJSONObject(i).getString("key"), fieldsToExtract.getJSONObject(i).getString("default_value"));
-        }
-        return ret;
-    }
-    
     private void printForDebbuging(String textParsed, String textUnparsed, MutableNewsExtractedData parseddata){
         if(configuration instanceof DevelopmentConfiguration && ((DevelopmentConfiguration)configuration).getRunForDebugging()){
             System.out.println(String.format("Parsed text: \"%s\"\n\n--------------\n", textParsed));
@@ -191,22 +188,15 @@ public class RegexExtractorParser<E extends ExtractedData> implements ExtractorP
         return strb.toString();
     }
     
-//    @Override
-//    public MutableNewsExtractedData getDefaultData(Date publicationDate) {
-//        MutableNewsExtractedData ret = getDefaultData();
-//        ret.setPublicationDate(publicationDate);
-//        return ret;
-//    }
-//    
-//    @Override
-//    public MutableNewsExtractedData getDefaultData() {
-//        MutableNewsExtractedData ret = new MutableNewsExtractedData(this.defaultData);
-//        for(int i=0; i<fieldsToExtract.length(); i++){
-//            ret.setDefaultValue(fieldsToExtract.getJSONObject(i).getString("key"), fieldsToExtract.getJSONObject(i).getString("default_value"));
-//        }
-//        return ret;
-//    }
-
+    @Override
+    public MutableNewsExtractedData getDefaultData(ImmutableNewsExtractedData defData) {
+        MutableNewsExtractedData ret = new MutableNewsExtractedData(defData);
+        for(int i=0; i<fieldsToExtract.length(); i++){
+            ret.setDefaultValue(fieldsToExtract.getJSONObject(i).getString("key"), fieldsToExtract.getJSONObject(i).getString("default_value"));
+        }
+        return ret;
+    }
+    
     @Override
     public void updateDefaultData(MutableNewsExtractedData mutableExtractedData) {
         JSONObject jsonObject = mutableExtractedData.getExtractedData();

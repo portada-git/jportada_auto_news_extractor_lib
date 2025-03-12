@@ -26,7 +26,7 @@ import org.json.JSONObject;
  * @author josep
  * @param <T>
  */
-public /*abstract*/ class GenericCsvFileFormatter<T extends MutableNewsExtractedData> implements FileFormatter{
+public class GenericCsvFileFormatter<T extends MutableNewsExtractedData> implements FileFormatter{
     private boolean appendFile = false;
     private List<T> list = new ArrayList<>();
     private JSONArray headerFields;
@@ -55,45 +55,24 @@ public /*abstract*/ class GenericCsvFileFormatter<T extends MutableNewsExtracted
         return this;
     }
     
-//    public abstract String factToFactDataAsString(T fact);
     private FactDataAsString factToFactDataAsString(T fact){
         return this.factToFactDataAsString(fact, headerFields);
     }
     
-//    private String factToString(JSONObject dataObject, JSONArray headerFields){
-//        StringBuilder listOfFacts = new StringBuilder();
-//        listOfFacts.append("{");
-//        for(int i=0; i<headerFields.length(); i++){
-//            listOfFacts.append(getFieldName(headerFields.getString(i), "?"));
-//            listOfFacts.append(": ");
-//            FactDataAsString f = factToFactDataAsString(dataObject, headerFields);
-//            listOfFacts.append(f.getRow());
-//        }
-//        listOfFacts.append("}");
-//        return listOfFacts.toString();
-//    }
-//    
-//    private String factToString(JSONArray dataList, JSONArray headerFields){
-//        StringBuilder listOfFacts = new StringBuilder();
-//        listOfFacts.append("[");
-//        for(int i=0; i<dataList.length(); i++){
-//            FactDataAsString f = GenericCsvFileFormatter.this.factToFactDataAsString(dataList.getJSONObject(i), headerFields);
-//            listOfFacts.append(f.getRow());
-//        }
-//        listOfFacts.append("]");
-//        return listOfFacts.toString();
-//    }
-//    
-//    private List<FactDataAsString> factToListOfFactDataAsString(String referId, JSONArray dataList, JSONArray headerFields){
-//        List<FactDataAsString> listOfFacts = new ArrayList<>();
-//        for(int i=0; i<dataList.length(); i++){
-//            FactDataAsString f = this.factToFactDataAsString(dataList.getJSONObject(i), headerFields);
-//            f.setRow(String.format("\"%s\";%s", referId, f.getRow()));
-//            listOfFacts.add(f);
-//        }
-//        return listOfFacts;
-//    }
-    
+    private String getStructuredSingeObjectValue(Object value, MutableNewsExtractedData fact){
+        String ret;
+        value = fact.getObjectValue(value);
+        if(value instanceof JSONArray || value instanceof  Collection){
+            ret = getStructuredSingleListValue(value, fact);
+        }else if(value instanceof JSONObject || value instanceof Map){
+            ret = getStructuredSingleMapValue(value, fact);
+            singleListSeparator="; ";
+        }else{
+            ret = (value==null?"":value).toString();
+        }
+        return ret;
+    }
+            
     private String getStructuredValue(Object value, MutableNewsExtractedData fact){
         String ret;
         value = fact.getObjectValue(value);
@@ -108,6 +87,36 @@ public /*abstract*/ class GenericCsvFileFormatter<T extends MutableNewsExtracted
         return ret;
     }
             
+    private String getStructuredSingleListValue(Object value, MutableNewsExtractedData fact){
+        StringBuilder stringValue = new StringBuilder();
+        value = fact.getObjectValue(value);
+        if(value instanceof JSONArray){
+            stringValue.append("[");
+            for(int j=0; j<((JSONArray)value).length(); j++){
+                if (j>0){
+                    stringValue.append(singleListSeparator);
+                }
+                stringValue.append(getStructuredSingeObjectValue(((JSONArray) value).get(j), fact));                                
+            }
+            stringValue.append("]");
+    }else if(value instanceof Collection){
+            boolean notFirst=false;
+            stringValue.append("[");
+            for(Object item: (Collection)value){
+                if (notFirst){
+                    stringValue.append(", ");
+                }else{
+                    notFirst=true;
+                }
+                stringValue.append(getStructuredSingeObjectValue(item, fact));                                
+            }            
+            stringValue.append("]");
+        }else{
+            stringValue.append(value==null?"":value.toString());
+        }   
+        return stringValue.toString();
+    }
+    
     private String getListValue(Object value, MutableNewsExtractedData fact){
         StringBuilder stringValue = new StringBuilder();
         value = fact.getObjectValue(value);
@@ -131,6 +140,39 @@ public /*abstract*/ class GenericCsvFileFormatter<T extends MutableNewsExtracted
         }else{
             stringValue.append(value==null?"":value.toString().replaceAll("[\\[\\]\"]", ""));
         }   
+        return stringValue.toString();
+    }
+    
+    private String getStructuredSingleMapValue(Object value, MutableNewsExtractedData fact){
+        StringBuilder stringValue = new StringBuilder();
+        value = fact.getObjectValue(value);
+        if(value instanceof JSONObject){            
+            boolean notFirst=false;
+            stringValue.append("{");
+            for(String key: ((JSONObject) value).keySet()){
+                if (notFirst){
+                    stringValue.append(", ");
+                }else{
+                    notFirst=true;
+                }
+                stringValue.append(getStructuredSingeObjectValue(((JSONObject) value).get(key), fact));                                
+            }
+            stringValue.append("}");
+        }else if(value instanceof Map){
+            boolean notFirst=false;
+            stringValue.append("{");
+            for(Object key: ((Map) value).keySet()){
+                if (notFirst){
+                    stringValue.append(", ");
+                }else{
+                    notFirst=true;
+                }
+                stringValue.append(getStructuredSingeObjectValue(((Map) value).get(key), fact));                                
+            }
+            stringValue.append("}");
+        }else{
+            stringValue.append((value==null?"":value).toString());
+        }
         return stringValue.toString();
     }
             
@@ -175,7 +217,6 @@ public /*abstract*/ class GenericCsvFileFormatter<T extends MutableNewsExtracted
                 if(type.equals("joined_field")){
                     StringBuilder strb= new StringBuilder();
                     for(int fi=0; fi<jobj.getJSONArray("fields").length(); fi++){
-//                        strb.append(fact.getString(jobj.getJSONArray("fields").optString(fi)));
                         strb.append(getFormatedValue(jobj.getJSONArray("fields").optString(fi), fact));
                         if(fi<jobj.getJSONArray("fields").length()-1){
                             strb.append(jobj.optString("separator", ""));
@@ -186,7 +227,9 @@ public /*abstract*/ class GenericCsvFileFormatter<T extends MutableNewsExtracted
                     if(multipleValuesAS.equals(multipleValuesAS.AS_LIST)){
                         if(jobj.optString("style", "").equals("single")){
                             singleListSeparator = ", ";
-                            row.append(getListValue(fact.getObject(jobj.getString("field")), fact));
+                            row.append(getListValue(fact.getAsObject(jobj.getString("field")), fact));
+                        }else if(jobj.optString("style", "").equals("single_struct")){
+                            row.append(getStructuredSingleListValue(fact.getAsObject(jobj.getString("field")), fact));
                         }else{
                             row.append(getFormatedValue(jobj.getString("field"), fact));
                         }                    
@@ -198,8 +241,8 @@ public /*abstract*/ class GenericCsvFileFormatter<T extends MutableNewsExtracted
                 }else if(type.equals("composed")){
                     if(multipleValuesAS.equals(multipleValuesAS.AS_LIST)){
                         if(jobj.optString("style", "").equals("single")){
-                            Object o = fact.getObject(jobj.getString("field"));
-                            row.append(getMapValue(fact.getObject(jobj.getString("field")), fact));
+                            Object o = fact.getAsObject(jobj.getString("field"));
+                            row.append(getMapValue(fact.getAsObject(jobj.getString("field")), fact));
                         }else{
                             row.append(getFormatedValue(jobj.getString("field"), fact));
                         }

@@ -15,7 +15,7 @@ import org.json.JSONObject;
  * @author josepcanellas
  */
 @SuppressWarnings("unchecked")
-public class ProxyAutoNewsExtractorParser implements ExtractorParserApproach{
+public class ProxyAutoNewsExtractorParser implements ExtractorParserApproach<ExtractedData>{
     private static ProxyByAnnotationsBuilder<ExtractorParserApproach,ParserMarkerAnnotation> builder=null;
             
     private static void updateBuilder(String... searchPackages){
@@ -83,10 +83,10 @@ public class ProxyAutoNewsExtractorParser implements ExtractorParserApproach{
        return new ProxyAutoNewsExtractorParser(getExtractor(type, conf, parserId, jSONConfig, constants));
     }
 
-//    @Override
-//    public void init(Configuration conf) {
-//        extractor.init(conf);
-//    }
+    @Override
+    public void setLastParsed(ExtractedData lastParsed) {
+        extractor.setLastParsed(lastParsed);
+    }
 
     @Override
     public void init(Configuration configuration, int parserId) {
@@ -102,16 +102,6 @@ public class ProxyAutoNewsExtractorParser implements ExtractorParserApproach{
     public List<ExtractedData> parseFromString(String bonText, MutableNewsExtractedData partialExtractedDataToCopy) {
         return extractor.parseFromString(bonText, partialExtractedDataToCopy);
     }
-
-//    @Override
-//    public MutableNewsExtractedData getDefaultData() {
-//        return extractor.getDefaultData();
-//    }
-//
-//    @Override
-//    public MutableNewsExtractedData getDefaultData(Date newsdate) {
-//        return extractor.getDefaultData(newsdate);
-//    }
 
     @Override
     public MutableNewsExtractedData getDefaultData(ImmutableNewsExtractedData def) {

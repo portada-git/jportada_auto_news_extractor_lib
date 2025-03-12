@@ -17,6 +17,8 @@ public interface ExtractedData extends Cloneable, Serializable{
     String ORIGINAL_VALUE_FIELD = "original_value";
 
     String get(String field);
+    
+    Object getAsObject(String field);
 
     String getCalculatedValue(String field);
 

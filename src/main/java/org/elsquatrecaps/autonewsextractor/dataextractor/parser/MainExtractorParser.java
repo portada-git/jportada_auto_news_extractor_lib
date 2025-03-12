@@ -76,17 +76,19 @@ public class MainExtractorParser<E extends ExtractedData> implements ExtractorPa
         return this;
     }
 
-//    @Override
-//    public void init(Configuration configuration, int parserId) {
-//        this.configuration = configuration;
-//        this.parserId = parserId;
-//    }
-
     @Override
     public MainExtractorParser init(JSONObject jsonConfig) {
         this.jsonConfig = jsonConfig;   
         return this;
     }
+    
+    
+//    @Override
+//    public ExtractorParser init(E parsedList) {
+//        this.parsedDataList = parsedList;
+//        return this;
+//    }
+
 
     public List<E> parseFromString(String bonText, int parserId, ImmutableNewsExtractedData defaultData) {
         this.defaultData = defaultData;
@@ -141,6 +143,7 @@ public class MainExtractorParser<E extends ExtractedData> implements ExtractorPa
             }else{
                 proxy = ProxyAutoNewsExtractorParser.getInstance(approach, configuration, parserId, localJsonConfigParserModel.getJSONObject(parserDepth).getJSONObject("configuration"), constants);
             }
+            int pos = 0;
             for(ExtractedData extractedData: list){
                 MutableNewsExtractedData mutableExtractedData = (MutableNewsExtractedData) extractedData;
                 proxy.updateDefaultData(mutableExtractedData);
@@ -149,7 +152,13 @@ public class MainExtractorParser<E extends ExtractedData> implements ExtractorPa
                 }else{
                     List<E> fList = (List<E>) proxy.parseFromString(extractedData.get(alternativeSource), mutableExtractedData);
                     mutableExtractedData.set(alternativeTarget, new JSONArray(fList));
+                    l.add((E) mutableExtractedData);
                 }
+                ++pos;
+                //SET LAS DATA
+                if(!l.isEmpty()){
+                    proxy.setLastParsed(l.get(pos-1));
+                }                
             }
             ret =  parseFromExtractedDataList(l, parserDepth+1);
         }else{

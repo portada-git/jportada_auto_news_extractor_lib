@@ -13,7 +13,7 @@ import org.json.JSONObject;
  * @param <R>
  */
 //public abstract class AbstractCalculator<P,R> implements ConfigurableAutoNewsExtractorCalculator<P, R>{
-public abstract class AbstractCalculator<P,R> implements AutoNewsExtractorCalculator<P, R>{
+public abstract class AbstractCalculator<R> implements AutoNewsExtractorCalculator<R>{
     public static final String CONFIGURATION=Configuration.class.getName();
     public static final String PARSER_ID=Integer.class.getName();
     public static final String EXTRACTED_DATA=MutableNewsExtractedData.class.getName();
@@ -21,7 +21,7 @@ public abstract class AbstractCalculator<P,R> implements AutoNewsExtractorCalcul
     private final Map<String, Object> initData = new HashMap<>();
         
     @Override
-    public R call(P param) {
+    public R call(Object[] param) {
         return calculate(param);
     }    
 
@@ -46,5 +46,13 @@ public abstract class AbstractCalculator<P,R> implements AutoNewsExtractorCalcul
     
     protected <T> T getInitData(String key){
         return (T) initData.get(key);
+    }
+    
+    protected boolean isEmptyParam(Object param){
+        boolean ret = param == null;
+        if(ret && param instanceof String){
+            ret = ((String)param).isEmpty() || ((String)param).isBlank();
+        }
+        return ret;
     }
 }

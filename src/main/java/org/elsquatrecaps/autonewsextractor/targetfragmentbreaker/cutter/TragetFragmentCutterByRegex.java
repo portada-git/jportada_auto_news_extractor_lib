@@ -2,6 +2,7 @@ package org.elsquatrecaps.autonewsextractor.targetfragmentbreaker.cutter;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.elsquatrecaps.autonewsextractor.error.AutoNewsRuntimeException;
 import org.elsquatrecaps.autonewsextractor.tools.RegexBuilder;
 import org.elsquatrecaps.autonewsextractor.tools.configuration.RegexConfiguration;
 import org.elsquatrecaps.utilities.tools.configuration.Configuration;
@@ -40,42 +41,46 @@ public class TragetFragmentCutterByRegex implements TargetFragmentCutter{
     public String getTargetTextFromText(String bonText){
         String ret=bonText;
         RegexConfiguration regexConfiguration = (RegexConfiguration) especificConfigurator;
-        Pattern pattern = RegexBuilder.getInstance(regexConfiguration, parserModel).buildRegex("fragment_initial_detector");
-        Matcher matcher = pattern.matcher(bonText);
-        if(matcher.find()){
-            String g1 = "";
-            String g2 = bonText;
-            int groups = matcher.groupCount();
-            boolean found = groups==2 || groups==3;
-            switch (groups) {
-                case 3:
-                    g1 = matcher.group(2).trim();
-                    g2 = matcher.group(3).trim();
-                    break;
-                case 2:
-                    g1 = matcher.group(1).trim();
-                    g2 = matcher.group(2).trim();
-                    break;
-                default:
-                    for(int inc=0; !found && inc<30; inc+=3){
-                        if(matcher.group(1+inc)!=null){
-                            g1= matcher.group(2+inc);
-                            g2 = matcher.group(3+inc).trim();
-                            found=true;
-                        }
-                    }   
-                    break;
-            }
-            if(found){
-                g2 = getTheEndOfText(g2);
-                String nex="\n";
-                if(g1.endsWith("\n")||g2.startsWith("\n")){
-                    nex="";
+        try{
+            Pattern pattern = RegexBuilder.getInstance(regexConfiguration, parserModel).buildRegex("fragment_initial_detector");
+            Matcher matcher = pattern.matcher(bonText);
+            if(matcher.find()){
+                String g1 = "";
+                String g2 = bonText;
+                int groups = matcher.groupCount();
+                boolean found = groups==2 || groups==3;
+                switch (groups) {
+                    case 3:
+                        g1 = matcher.group(2).trim();
+                        g2 = matcher.group(3).trim();
+                        break;
+                    case 2:
+                        g1 = matcher.group(1).trim();
+                        g2 = matcher.group(2).trim();
+                        break;
+                    default:
+                        for(int inc=0; !found && inc<30; inc+=3){
+                            if(matcher.group(1+inc)!=null){
+                                g1= matcher.group(2+inc);
+                                g2 = matcher.group(3+inc).trim();
+                                found=true;
+                            }
+                        }   
+                        break;
                 }
-                ret = g1.concat(nex).concat(g2);
-            }            
-        }else{
-            ret = getTheEndOfText(ret);
+                if(found){
+                    g2 = getTheEndOfText(g2);
+                    String nex="\n";
+                    if(g1.endsWith("\n")||g2.startsWith("\n")){
+                        nex="";
+                    }
+                    ret = g1.concat(nex).concat(g2);
+                }            
+            }else{
+                ret = getTheEndOfText(ret);
+            }
+        }catch(AutoNewsRuntimeException ex){
+            System.out.println(ex.getMessage());
         }
         return ret;
     }

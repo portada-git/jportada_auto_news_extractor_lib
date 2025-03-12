@@ -70,6 +70,8 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     private String informationUnitBuilderType;
     @Arg(dest="metadataSource")
     private String metadataSource;
+    @Arg(dest="cost_center") //-cc
+    private String costCenter;
 
     /**
      *
@@ -82,6 +84,9 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         boolean ret=true;
         if(!this.getAttrs().contains(dest)){
             switch(dest){
+                case "cost_center":
+                    this.setCostCenter((String) val);
+                    break;
                 case "informationUnitBuilderType":
                     this.setInformationUnitBuilderType((String) val);
                     break;
@@ -160,6 +165,9 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         T ret = null;
         if(this.getAttrs().contains(key)){
             switch(key){
+                case "cost_center":
+                    ret = (T) this.getCostCenter();
+                    break;
                 case "informationUnitBuilderType":
                     ret = (T) this.getInformationUnitBuilderType();
                     break;
@@ -255,6 +263,7 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
         parser.addArgument("-comp", "--quantity_of_characters_to_compare").nargs("?").help("Indica la quantitat de caracters a comparar si la metodologia de ensamblatge és joinerType = \"file_name\" y metadataSource = \"portada_file_name\".");
         parser.addArgument("-iut", "--informationUnitBuilderType").nargs("?").help("Indica la metodologia d'ensamblatge a fer servir per crear les unitats d'informació");
         parser.addArgument("-ms", "--metadataSource").nargs("?").help("Indica el tipus de metadata a fer servir durant d'ensamblatge ");
+        parser.addArgument("-cc", "--cost_center").nargs("?").help("Indica quin ha de ser en centre de cost en cas que hi hagi pagaments");
         try {
             parser.parseArgs(args, this);
             this.setInitConfigFile(getFile(this.strinitConfigFile));
@@ -278,6 +287,15 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     
     @Override
     protected void updateAttrs(){
+        if(this.costCenter!=null){
+            this.getAttrs().add("cost_center");
+        }        
+        if(this.metadataSource!=null){
+            this.getAttrs().add("metadataSource");
+        }        
+        if(this.informationUnitBuilderType!=null){
+            this.getAttrs().add("informationUnitBuilderType");
+        }        
         if(this.strQuantityOfCharactersToCompare!=null){
             this.getAttrs().add("quantity_of_characters_to_compare");
         }        
@@ -652,6 +670,22 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     private void setInformationUnitBuilderType(String informationUnitBuilderType) {
         this.informationUnitBuilderType = informationUnitBuilderType;
         this.getAttrs().add("informationUnitBuilderType");        
+    }
+
+    /**
+     * @param centerCostName name of center cost if is necessary
+     */
+    private void setCostCenter(String cc) {
+        this.costCenter = cc;
+        this.getAttrs().add("cost_center");        
+    }
+
+    /**
+     * @return the metadataSource
+     */
+    @Override
+    public String getCostCenter() {
+        return costCenter;
     }
 
     /**

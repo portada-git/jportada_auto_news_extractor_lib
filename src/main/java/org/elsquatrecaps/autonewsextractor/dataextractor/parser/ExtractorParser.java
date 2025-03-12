@@ -3,7 +3,6 @@ package org.elsquatrecaps.autonewsextractor.dataextractor.parser;
 import java.util.List;
 import org.elsquatrecaps.autonewsextractor.model.ExtractedData;
 import org.elsquatrecaps.utilities.tools.configuration.Configuration;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -18,7 +17,7 @@ public interface ExtractorParser<E extends ExtractedData>{
     ExtractorParser init(Configuration configuration);
 
     ExtractorParser init(JSONObject jsonConfig);
-    
+        
     JSONObject getCsvProperties();
 
     JSONObject getCsvProperties(int parserId);

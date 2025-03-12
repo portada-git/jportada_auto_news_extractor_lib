@@ -13,7 +13,7 @@ import org.json.JSONObject;
  * @author josepcanellas
  */
 @SuppressWarnings("unchecked")
-public class DataExtractorCalculatorProxyClass implements AutoNewsExtractorCalculator<JSONObject, Object>{
+public class DataExtractorCalculatorProxyClass /*implements AutoNewsExtractorCalculator<JSONObject, Object>*/{
     public static final String LITERAL_PARAMS = "literalParams";
     public static final String FIELD_PARAMS = "fieldParams";
     public static final String PARAMS = "params";
@@ -31,22 +31,9 @@ public class DataExtractorCalculatorProxyClass implements AutoNewsExtractorCalcu
    
     //private ConfigurableAutoNewsExtractorCalculator<P, R> calculator;
     private final Map<String, Object> extraData = new HashMap<>();
-//    private Configuration conf;
-//    private ExtractedData extractedData;
-//    private int parserId;
 
     public DataExtractorCalculatorProxyClass() {
     }
-    
-//    private DataExtractorCalculatorProxyClass(Configuration conf, int parserId, ExtractedData extractedData) {
-//        this(conf, extractedData);
-//        this.parserId=parserId;
-//    }
-//    
-//    private DataExtractorCalculatorProxyClass(Configuration conf, ExtractedData extractedData) {
-//        this.extractedData = extractedData;
-//        this.conf=conf;
-//    }
     
     public void init(String key, Object value){
         extraData.put(key, value);
@@ -57,9 +44,8 @@ public class DataExtractorCalculatorProxyClass implements AutoNewsExtractorCalcu
     }
     
 //    private <P> ConfigurableAutoNewsExtractorCalculator<P,String> getCalculator(String calculatorId){
-    private <P> AutoNewsExtractorCalculator<P,String> getCalculator(String calculatorId){
-//        ConfigurableAutoNewsExtractorCalculator<P,String> ret;
-        AutoNewsExtractorCalculator<P,String> ret;
+    private <R> AutoNewsExtractorCalculator<R> getCalculator(String calculatorId){
+        AutoNewsExtractorCalculator<R> ret;
         Configuration conf;
         if(extraData.containsKey(ExtraDataCalculatorEnum.CONFIGURATION.toString())){
             conf = (Configuration) extraData.get(ExtraDataCalculatorEnum.CONFIGURATION.toString());
@@ -76,17 +62,15 @@ public class DataExtractorCalculatorProxyClass implements AutoNewsExtractorCalcu
     }
     
 //    private <P> ConfigurableAutoNewsExtractorCalculator<P,String> getCalculator(String calculatorId, DataExtractConfiguration conf){
-    private <P> AutoNewsExtractorCalculator<P,String> getCalculator(String calculatorId, DataExtractConfiguration conf){
+    private <R> AutoNewsExtractorCalculator<R> getCalculator(String calculatorId, DataExtractConfiguration conf){
 //        ConfigurableAutoNewsExtractorCalculator<P,String> ret;
-        AutoNewsExtractorCalculator<P,String> ret;
+        AutoNewsExtractorCalculator<R> ret;
         ret = getCalculator(calculatorId, conf.getDataExtractCalculatorBuilderPackagesToSearch());
         return ret;
     }
     
-//    private static <P> ConfigurableAutoNewsExtractorCalculator<P,String> getCalculator(String calculatorId, String... searchPackages){
-    private static <P> AutoNewsExtractorCalculator<P,String> getCalculator(String calculatorId, String... searchPackages){
-//        ConfigurableAutoNewsExtractorCalculator<P,String> ret;
-        AutoNewsExtractorCalculator<P,String> ret;
+    private static <R> AutoNewsExtractorCalculator<R> getCalculator(String calculatorId, String... searchPackages){
+        AutoNewsExtractorCalculator<R> ret;
         if(builder==null){
             updateBuilder(searchPackages);
         }
@@ -102,53 +86,14 @@ public class DataExtractorCalculatorProxyClass implements AutoNewsExtractorCalcu
         return ret;
     }
     
-//    public static DataExtractorCalculatorProxyClass getInstance(Configuration conf, int parserId, ExtractedData extractedData){
-//        return new DataExtractorCalculatorProxyClass(conf, extractedData);
-//    }
-    
-//    public static DataExtractorCalculatorProxyClass getInstance(String calculatorId){
-//       return new DataExtractorCalculatorProxyClass(getCalculator(calculatorId));
-//    }
-//    
-//    public static DataExtractorCalculatorProxyClass getInstance(String calculatorId, Configuration conf){
-//       return new DataExtractorCalculatorProxyClass(getCalculator(calculatorId, conf));
-//    }
-//
-//    public static DataExtractorCalculatorProxyClass getInstance(String calculatorId, Configuration conf, ExtractedData extractedData){
-//       return new DataExtractorCalculatorProxyClass(getCalculator(calculatorId, conf));
-//    }
-//
-//    public static DataExtractorCalculatorProxyClass getInstance(String calculatorId, String... searchPackages){
-//       return new DataExtractorCalculatorProxyClass(getCalculator(calculatorId, searchPackages));
-//    }
-//
-//    public static DataExtractorCalculatorProxyClass getInstance(String calculatorId, ExtractedData extractedData, String... searchPackages){
-//       return new DataExtractorCalculatorProxyClass(getCalculator(calculatorId, searchPackages));
-//    }
-
 //    @Override
-//    public void init(Object... params) {
-//        calculator.init(params);
-//    }
-//
-//    @Override
-//    public void init(Configuration conf, Integer parserId, ExtractedData extractedData) {
-//        calculator.init(conf, parserId, extractedData);
-//    }
-//
-//    @Override
-//    public voiFIELD_VALUES_AS_PARAMSd init(Configuration conf, ExtractedData extractedData) {
-//        calculator.init(conf, extractedData);
-//    }
-
-    @Override
-    public Object calculate(JSONObject param) {
+    public <R> R calculate(JSONObject param) {
 //        int currentPos=0;
 //        int extraLength=0;
         Object[] params;
-        Object ret;
+        R ret;
 //        ConfigurableAutoNewsExtractorCalculator<Object, String> calc = getCalculator(param.getString("calculator"));
-        AutoNewsExtractorCalculator<Object, String> calc = getCalculator(param.getString("calculator"));
+        AutoNewsExtractorCalculator<R> calc = getCalculator(param.getString("calculator"));
         if(param.has("init_data")){
             for(int i=0; i<param.getJSONArray("init_data").length(); i++){
                 calc.init(extraData.get(param.getJSONArray("init_data").get(i)));
@@ -167,7 +112,7 @@ public class DataExtractorCalculatorProxyClass implements AutoNewsExtractorCalcu
         if(param.has(PARAMS)){
             length += (lengthParams = param.getJSONArray(PARAMS).length());
         }
-        params = new String[length];
+        params = new Object[length];
         int id=0;
         for(int i=0; i<lengthParams; i++, id++){
             JSONObject p = param.getJSONArray(PARAMS).getJSONObject(i);
@@ -175,13 +120,15 @@ public class DataExtractorCalculatorProxyClass implements AutoNewsExtractorCalcu
                 String[] aParam = p.getString("value").split("\\.");
                 if(aParam.length>1){
                     Object obj = extraData.get(aParam[0]);
-                    for(int pos=1; pos<aParam.length; pos++){
-                        if(obj instanceof ExtractedData){
-                            obj = ((ExtractedData)obj).get(aParam[pos]);
-                        }else if(obj instanceof Map){
-                            obj = ((Map)obj).get(aParam[pos]);
-                        }else if(obj instanceof JSONObject){
-                            obj = ((JSONObject) obj).get(aParam[pos]);
+                    if(obj != null){
+                        for(int pos=1; pos<aParam.length; pos++){
+                            if(obj instanceof ExtractedData){
+                                obj = ((ExtractedData)obj).getAsObject(aParam[pos]);
+                            }else if(obj instanceof Map){
+                                obj = ((Map)obj).get(aParam[pos]);
+                            }else if(obj instanceof JSONObject){
+                                obj = ((JSONObject) obj).get(aParam[pos]);
+                            }
                         }
                     }
                     params[i] = obj;
@@ -196,13 +143,15 @@ public class DataExtractorCalculatorProxyClass implements AutoNewsExtractorCalcu
             String[] aParam = param.getJSONArray(FIELD_PARAMS).getString(i).split("\\.");
             if(aParam.length>1){
                 Object obj = extraData.get(aParam[0]);
-                for(int pos=1; pos<aParam.length; pos++){
-                    if(obj instanceof ExtractedData){
-                        obj = ((ExtractedData)obj).get(aParam[pos]);
-                    }else if(obj instanceof Map){
-                        obj = ((Map)obj).get(aParam[pos]);
-                    }else if(obj instanceof JSONObject){
-                        obj = ((JSONObject) obj).get(aParam[pos]);
+                if(obj != null){
+                    for(int pos=1; pos<aParam.length; pos++){
+                        if(obj instanceof ExtractedData){
+                            obj = ((ExtractedData)obj).getAsObject(aParam[pos]);
+                        }else if(obj instanceof Map){
+                            obj = ((Map)obj).get(aParam[pos]);
+                        }else if(obj instanceof JSONObject){
+                            obj = ((JSONObject) obj).get(aParam[pos]);
+                        }
                     }
                 }
                 params[id] = obj;
@@ -213,38 +162,13 @@ public class DataExtractorCalculatorProxyClass implements AutoNewsExtractorCalcu
         for(int i=0; i < lengthLiterals; id++,i++){
             params[id] = param.getJSONArray(LITERAL_PARAMS).optString(i);
         }
-//        
-//        if(param.getJSONArray("type").toList().contains(ExtraDataCalculatorEnum.REGEX_CONFIGURABLE.toString())){
-//            calc.init(conf, parserId);
-//        }else if(param.getJSONArray("type").toList().contains(ExtraDataCalculatorEnum.REGEX_CONFIGURABLE.toString())){
-//            calc.init(conf);
-//        }
-//        if(param.getJSONArray("type").toList().contains(ExtraDataCalculatorEnum.NEWS_PUBLICATION_DATE.toString())){
-//            extraLength++;
-//        }
-//        if(param.getJSONArray("type").toList().contains(ExtraDataCalculatorEnum.FIELD_VALUES_AS_PARAMS.toString())){
-//            params = new String[param.getJSONArray("fieldParams").length()+extraLength];
-//            for(int i=0; i<param.getJSONArray("fieldParams").length(); i++){
-//                params[i] = extractedData.get(param.getJSONArray("fieldParams").getString(i));
-//            }
-//            currentPos = param.getJSONArray("fieldParams").length();
-//        }else if(extraLength>0){
-//            params = new String[extraLength];
-//        }
-//        if(param.getJSONArray("type").toList().contains(ExtraDataCalculatorEnum.NEWS_PUBLICATION_DATE.toString())){
-//            params[currentPos++]=String.valueOf(((NewsExtractedData)extractedData).getPublicationDate().getTime());
-//        }
+
         ret = calc.calculate(params);
 
         return ret;
     }
 
-    @Override
-    public Object call(JSONObject param) {
-        return calculate(param);
-    }
-
-    @Override
+//    @Override
     public void init(Object obj) {
         if(obj instanceof Configuration){
             Configuration conf = (Configuration) obj;

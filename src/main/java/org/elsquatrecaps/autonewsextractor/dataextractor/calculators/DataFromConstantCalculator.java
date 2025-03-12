@@ -1,6 +1,5 @@
 package org.elsquatrecaps.autonewsextractor.dataextractor.calculators;
 
-import org.elsquatrecaps.utilities.tools.configuration.Configuration;
 import org.json.JSONObject;
 
 /**
@@ -8,14 +7,14 @@ import org.json.JSONObject;
  * @author josep
  */
 @DataExtractorCalculatorMarkerAnnotation(id = "DataFromConstantCalculator")
-public class DataFromConstantCalculator extends AbstractCalculator<String[], String>{
+public class DataFromConstantCalculator extends AbstractCalculator<String>{
     public static final int CONSTANT_KEY=0;
     
     @Override
-    public String calculate(String[] params) {
+    public String calculate(Object[] params) {
         String constantKey;
         String ret;
-        constantKey = params[CONSTANT_KEY];
+        constantKey = (String) params[CONSTANT_KEY];
         ret = getConstats().optString(constantKey, "");
         return ret;
     }

@@ -93,7 +93,7 @@ public class ImmutableNewsExtractedData implements NewsExtractedData {
 
     @Override
     public String get(String field) {
-        String ret;
+        String ret= "";
         if(isJsonStructuredField(field)){
             ret = getCalculatedValue(field);
             if (isEmpty(ret)) {
@@ -102,7 +102,7 @@ public class ImmutableNewsExtractedData implements NewsExtractedData {
                     ret = getDefaultValue(field);
                 }
             }
-        }else{
+        }else if(extractedData.has(field)){
             ret = extractedData.get(field).toString();
         }
         return ret;
@@ -125,7 +125,7 @@ public class ImmutableNewsExtractedData implements NewsExtractedData {
         return ret; 
     }
     
-    public Object getObject(String field) {
+    public Object getAsObject(String field) {
         return getObjectValue(extractedData.get(field));
     }
     

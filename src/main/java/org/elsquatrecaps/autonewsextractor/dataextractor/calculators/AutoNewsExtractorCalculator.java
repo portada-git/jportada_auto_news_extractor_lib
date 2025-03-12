@@ -6,9 +6,9 @@ import org.elsquatrecaps.utilities.tools.Callback;
  *
  * @author josep
  */
-public interface AutoNewsExtractorCalculator<P, R> extends Callback<P, R> {
+public interface AutoNewsExtractorCalculator<R> extends Callback<Object[], R> {
 
-    R calculate(P param);
+    R calculate(Object[] param);
     
     public void init(Object conf);
     

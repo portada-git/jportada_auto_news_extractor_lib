@@ -18,6 +18,8 @@ public interface ExtractorParserApproach<E extends ExtractedData>/*extends Confi
 
     void init(JSONObject jsonConfig);
 
+    void setLastParsed(E lastParsed);
+
     List<E> parseFromString(String bonText, MutableNewsExtractedData partialExtractedDataToCopy);
 
 //    MutableNewsExtractedData getDefaultData();
