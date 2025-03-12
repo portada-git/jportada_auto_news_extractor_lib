@@ -96,7 +96,12 @@ public class DataExtractorCalculatorProxyClass /*implements AutoNewsExtractorCal
         AutoNewsExtractorCalculator<R> calc = getCalculator(param.getString("calculator"));
         if(param.has("init_data")){
             for(int i=0; i<param.getJSONArray("init_data").length(); i++){
-                calc.init(extraData.get(param.getJSONArray("init_data").get(i)));
+                Object initData = param.getJSONArray("init_data").get(i);
+                if(initData instanceof String){
+                    calc.init(extraData.get(initData));
+                }else{
+                    calc.init(initData);
+                }
             }
         }
         int length=0;
