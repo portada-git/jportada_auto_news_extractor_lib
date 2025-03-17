@@ -1,6 +1,5 @@
 package org.elsquatrecaps.autonewsextractor.tools.configuration;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import net.sourceforge.argparse4j.ArgumentParsers;
@@ -673,9 +672,9 @@ public class AutoNewsExtractorConfiguration extends AbstractConfiguration implem
     }
 
     /**
-     * @param centerCostName name of center cost if is necessary
+     * @param cc name of center cost if is necessary
      */
-    private void setCostCenter(String cc) {
+    public void setCostCenter(String cc) {
         this.costCenter = cc;
         this.getAttrs().add("cost_center");        
     }

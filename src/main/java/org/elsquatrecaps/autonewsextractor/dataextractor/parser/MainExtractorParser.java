@@ -26,6 +26,8 @@ public class MainExtractorParser<E extends ExtractedData> implements ExtractorPa
     JSONObject jsonConfig;
     int parserId=0;
     ImmutableNewsExtractedData defaultData;
+    String challenge;
+    String signedData;
 
     public static MainExtractorParser getInstance(){
         return new MainExtractorParser();
@@ -81,13 +83,6 @@ public class MainExtractorParser<E extends ExtractedData> implements ExtractorPa
         this.jsonConfig = jsonConfig;   
         return this;
     }
-    
-    
-//    @Override
-//    public ExtractorParser init(E parsedList) {
-//        this.parsedDataList = parsedList;
-//        return this;
-//    }
 
 
     public List<E> parseFromString(String bonText, int parserId, ImmutableNewsExtractedData defaultData) {
@@ -113,15 +108,14 @@ public class MainExtractorParser<E extends ExtractedData> implements ExtractorPa
         }else{
             proxy = ProxyAutoNewsExtractorParser.getInstance(approach, configuration, parserId, localJsonConfigParserModel.getJSONObject(0).getJSONObject("configuration"), constants);
         }
+        if(proxy.needSecurityConfig()){
+            proxy.init(challenge, signedData);
+        }
         MutableNewsExtractedData defaultData = getDefaultExtractedDate(proxy);
         data = (List<E>) proxy.parseFromString(bonText, defaultData);
         return (List<E>) parseFromExtractedDataList(data, 1);
     }
-    
-//    protected MutableNewsExtractedData getDefaultExtractedDate(ProxyAutoNewsExtractorParser proxy){
-//        MutableNewsExtractedData defaultData = proxy.getDefaultData();
-//        return defaultData;
-//    }
+
     protected MutableNewsExtractedData getDefaultExtractedDate(ProxyAutoNewsExtractorParser proxy){
         MutableNewsExtractedData defaultData = new MutableNewsExtractedData(this.defaultData);
         return defaultData;
@@ -142,6 +136,9 @@ public class MainExtractorParser<E extends ExtractedData> implements ExtractorPa
                 proxy = ProxyAutoNewsExtractorParser.getInstance(approach, configuration, parserId, localJsonConfigParserModel.getJSONObject(parserDepth).getJSONObject("configuration"));
             }else{
                 proxy = ProxyAutoNewsExtractorParser.getInstance(approach, configuration, parserId, localJsonConfigParserModel.getJSONObject(parserDepth).getJSONObject("configuration"), constants);
+            }
+            if(proxy.needSecurityConfig()){
+                proxy.init(challenge, signedData);
             }
             int pos = 0;
             for(ExtractedData extractedData: list){
@@ -180,5 +177,12 @@ public class MainExtractorParser<E extends ExtractedData> implements ExtractorPa
             ret = parser.optJSONObject("csv_view");
         }
         return ret;
+    }
+
+    @Override
+    public ExtractorParser init(String challenge, String signedData) {
+        this.signedData = signedData;
+        this.challenge = challenge;
+        return this;
     }
 }

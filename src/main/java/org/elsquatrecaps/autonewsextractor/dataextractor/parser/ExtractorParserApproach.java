@@ -17,6 +17,8 @@ public interface ExtractorParserApproach<E extends ExtractedData>/*extends Confi
     void init(Configuration configuration, int parserId);
 
     void init(JSONObject jsonConfig);
+    
+    void init(String challenge, String signedData);
 
     void setLastParsed(E lastParsed);
 
@@ -29,4 +31,5 @@ public interface ExtractorParserApproach<E extends ExtractedData>/*extends Confi
 
     void updateDefaultData(MutableNewsExtractedData extractedData);
     
+    boolean needSecurityConfig();    
 }

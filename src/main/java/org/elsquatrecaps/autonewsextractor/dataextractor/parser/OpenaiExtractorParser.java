@@ -21,19 +21,19 @@ import org.json.JSONObject;
 /**
  *
  * @author josep
+ * @param <E>
  */
 @ParserMarkerAnnotation(approach = "openai")
-public class OpenaiExtractorParser<E extends ExtractedData> implements ExtractorParserApproach<E>{
-    Configuration configuration;
-    int parserId;
+public class OpenaiExtractorParser<E extends ExtractedData> extends AbstractExtractorParser<E>{
     String costCenter;
     JSONObject configJson=new JSONObject();
-    JSONObject constants;
     JSONArray fieldsToAssign;
     JSONArray fieldsToCalculate;
     boolean parseByParagraphs;
     boolean saveParsedData;
     E lastParsed=null;
+    String challenge;
+    String signedData;
     PortadaMicroservicesCaller caller = new PortadaMicroservicesCaller();
 
     
@@ -44,40 +44,38 @@ public class OpenaiExtractorParser<E extends ExtractedData> implements Extractor
         costCenter = configuration.getAttr("cost_center");
     }
 
-
     @Override
-    public void init(JSONObject jsonConfig) {
-        if(jsonConfig.has("ai_instructions")){
-            initJsonCOnfig(jsonConfig);
-        }else{
-            initJsonConstants(jsonConfig);
-        }        
-    }
-    
-    @Override
-    public void setLastParsed(E parsedList){
-        this.lastParsed = parsedList;
-    }
-    
-    private void initJsonConstants(JSONObject constants) {
-        this.constants = constants;
-    }
-    
-    private void initJsonCOnfig(JSONObject jsonConfig) {
+    protected void initJsonCOnfig(JSONObject jsonConfig) {
         this.fieldsToAssign = jsonConfig.getJSONArray("fields_to_assign");
-        this.fieldsToCalculate = jsonConfig.optJSONArray("fields_to_calculate");
+        this.fieldsToCalculate = jsonConfig.getJSONArray("fields_to_calculate");
         this.configJson.put("ai_instructions", jsonConfig.getJSONObject("ai_instructions"));
-        this.configJson.put("model",  jsonConfig.getString("model"));
-        this.configJson.put("model_config",  jsonConfig.getJSONObject("model_config"));
+        this.configJson.put("model", jsonConfig.getString("model"));
+        this.configJson.put("model_config", jsonConfig.getJSONObject("model_config"));
         this.parseByParagraphs = jsonConfig.optBoolean("parse_by_paragraphs", false);
         this.saveParsedData = jsonConfig.optBoolean("save_parsed_data", false);
         Properties ms_properties = new Properties();
-        try(FileReader fr = new FileReader(jsonConfig.getString("microservice_initializer_file"))){
+        try (final FileReader fr = new FileReader(jsonConfig.getString("microservice_initializer_file"))) {
             ms_properties.load(fr);
         } catch (IOException ex) {
             throw new RuntimeException("Can't load the config file to call to microservice.");
         }
         caller.init(ms_properties);
+    }
+    
+    @Override
+    public void init(String challenge, String signedData){ 
+        this.challenge = challenge;
+        this.signedData = signedData;
+    }       
+
+    @Override
+    public void setLastParsed(E parsedList){
+        this.lastParsed = parsedList;
+    }   
+    
+    @Override
+    public boolean needSecurityConfig(){
+        return true;
     }
     
     protected MutableNewsExtractedData parseDataFromAiJson(JSONObject aiJson, MutableNewsExtractedData partialExtracted, ImmutableNewsExtractedData lastExtracted){
@@ -128,7 +126,7 @@ public class OpenaiExtractorParser<E extends ExtractedData> implements Extractor
             params.put("config_json", configJson);
             MutableNewsExtractedData parseddata = null;
             try {
-                JSONObject resp = new JSONObject(caller.sendPostAsFormatParams("pr/extract_with_openai", "python", params, String.class));
+                JSONObject resp = new JSONObject(caller.sendPostAsFormatParams("pr/extract_with_openai", "python", params, challenge, signedData, String.class, false));
                 if(resp.getInt("status")==0){
                     parseddata = parseDataFromAiJson(resp.getJSONObject("content"), partialExtractedDataToCopy, lastData);
                 }else{

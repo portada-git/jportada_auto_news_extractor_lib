@@ -5,6 +5,7 @@ import org.elsquatrecaps.autonewsextractor.model.ExtractedData;
 import org.elsquatrecaps.autonewsextractor.model.ImmutableNewsExtractedData;
 import org.elsquatrecaps.autonewsextractor.model.MutableNewsExtractedData;
 import org.elsquatrecaps.autonewsextractor.tools.configuration.DataExtractConfiguration;
+import org.elsquatrecaps.portada.jportadamscaller.PortadaMicroservicesCaller;
 import org.elsquatrecaps.utilities.proxies.ProxyByAnnotationsBuilder;
 import org.elsquatrecaps.utilities.tools.configuration.Configuration;
 import org.json.JSONObject;
@@ -111,5 +112,15 @@ public class ProxyAutoNewsExtractorParser implements ExtractorParserApproach<Ext
     @Override
     public void updateDefaultData(MutableNewsExtractedData ed) {
         extractor.updateDefaultData(ed);
+    }
+
+    @Override
+    public void init(String challenge, String signedData) {
+        extractor.init(challenge, signedData);
+    }
+
+    @Override
+    public boolean needSecurityConfig() {
+        return extractor.needSecurityConfig();
     }
 }

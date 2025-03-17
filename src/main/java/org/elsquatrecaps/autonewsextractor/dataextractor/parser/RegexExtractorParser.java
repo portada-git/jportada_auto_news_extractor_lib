@@ -22,22 +22,15 @@ import org.json.JSONObject;
  * @param <E>
  */
 @ParserMarkerAnnotation(approach = "regex")
-public class RegexExtractorParser<E extends ExtractedData> implements ExtractorParserApproach<E>{
+public class RegexExtractorParser<E extends ExtractedData> extends AbstractExtractorParser<E>{
     private static final String LAST_EXTRACTED_DATA = "last_extracted_data";
     String basePath;
     String searchPath;
     String variant;
     String mainRegex;
     int maxGroups;
-//    String[] fiedsToExtract;
-//    String[] defaultFieldValues;
-//    boolean[] copyLastValues;
-//    String[] calculators;
-    Configuration configuration;
-    int parserId;
     JSONArray fieldsToExtract;
     JSONArray fieldsToCalculate;
-    JSONObject constants;
     E lastParsed=null;
     
     @Override
@@ -61,11 +54,8 @@ public class RegexExtractorParser<E extends ExtractedData> implements ExtractorP
         }
     }
 
-    private void initJsonConstants(JSONObject constants) {
-        this.constants = constants;
-    }
-    
-    private void initJsonCOnfig(JSONObject jsonConfig) {
+    @Override
+    protected void initJsonCOnfig(JSONObject jsonConfig) {
         this.mainRegex = jsonConfig.getString("main_regex");
         this.maxGroups = jsonConfig.getInt("max_groups");
         this.fieldsToExtract = jsonConfig.getJSONArray("fields_to_extract");

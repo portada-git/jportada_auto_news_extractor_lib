@@ -12,7 +12,7 @@ public enum ExtraDataCalculatorEnum {
     PARSER_ID,
     EXTRACTED_DATA,
     CONSTANTS;
-    
+
     public static final String LAST_EXTRACTED_DATA = "last_extracted_data";
     private static final Map<String, ExtraDataCalculatorEnum> enumForNames = new HashMap<>();    
     static{
