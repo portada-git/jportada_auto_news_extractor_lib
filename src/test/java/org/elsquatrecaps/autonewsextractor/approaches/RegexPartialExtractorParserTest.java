@@ -151,7 +151,7 @@ public class RegexPartialExtractorParserTest {
         String bonText = ""
                 + "Embarcaciones llegadas al puerto en el dia de ayer.\n" 
                 + "Mercantes españolas.\n" 
-                + "De Christiansund en 33 d. bergantin F'ama, de 109 t., c. D. V. Ramon Rodriguez, con 5930 vog. bacalao y 200 de pezpalo á la orden. \n" 
+                + "De Christiansund en 33 d. bergantin F'ama, de 109 t., c. D. V. Ramon Rodriguez, con 5930 vog. bacalao y 200 de pezpalo á la orden. Queda en\n" 
                 + "De Almería y Aguilas en 15 d. laud Aguila, de 35 t., p. S. Lopez, con 130 gq. perdigon es á D. A. Sala, 50 id. á D. J. Margarit. 400 de plomo á D. J. Serratosa, 200 fanegas cebada á Don B. Solá y Amat, y 12 millares esparto á D. S. Garriga.\n" 
                 + "De Vinaroz en 3 d, laud Tres Amigos, de 23 t., p. C. Roca, con 1000 a. algarrobas á los señores Caralt Matheu y Segarra, 11 pipas aceite, à D. C. Torrens y Miralda, 10 id. á D.-S. Pou, 4 id. á D. E. Beltran y 4 id. á D. J. Verges.\n" 
                 + "De Adra y Denia en 3 d. laud Dolores, de 52 t., p. M. Lopez, con 472 cajas plomo, 212 rollós id., 100 barriles litargirio en hojas y 10 de minio á D. P. Marsal, 18 rollos plomo á D. C. Truyano, 43 bultos trapos y 9 de retazos de papel á la órden.\n" 

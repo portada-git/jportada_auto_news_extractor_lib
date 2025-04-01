@@ -87,4 +87,18 @@ public class InfromationUnitBuilderProxyClassTest {
         }, "0000");
     }
     
+    public static void main(String[] args){
+        setUpClass();
+        InfromationUnitBuilderProxyClassTest test = new InfromationUnitBuilderProxyClassTest();
+        
+        test.setUp();
+        test.testGetInstanceFromConfig();
+        test.tearDown();
+        
+        test.setUp();
+        test.testgetText();
+        test.tearDown();
+        
+        tearDownClass();
+    }
 }
