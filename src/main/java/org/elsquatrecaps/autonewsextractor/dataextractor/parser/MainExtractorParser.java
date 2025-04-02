@@ -117,7 +117,7 @@ public class MainExtractorParser<E extends ExtractedData> implements ExtractorPa
     }
 
     protected MutableNewsExtractedData getDefaultExtractedDate(ProxyAutoNewsExtractorParser proxy){
-        MutableNewsExtractedData defaultData = new MutableNewsExtractedData(this.defaultData);
+        MutableNewsExtractedData defaultData = proxy.getDefaultData(this.defaultData);
         return defaultData;
     }
     
@@ -154,7 +154,7 @@ public class MainExtractorParser<E extends ExtractedData> implements ExtractorPa
                 ++pos;
                 //SET LAS DATA
                 if(!l.isEmpty()){
-                    proxy.setLastParsed(l.get(pos-1));
+                    proxy.setLastParsed(l.get(l.size()-1));
                 }                
             }
             ret =  parseFromExtractedDataList(l, parserDepth+1);

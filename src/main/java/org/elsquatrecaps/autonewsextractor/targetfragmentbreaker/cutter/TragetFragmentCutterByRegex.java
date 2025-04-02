@@ -44,7 +44,7 @@ public class TragetFragmentCutterByRegex implements TargetFragmentCutter{
         try{
             Pattern pattern = RegexBuilder.getInstance(regexConfiguration, parserModel).buildRegex("fragment_initial_detector");
             Matcher matcher = pattern.matcher(bonText);
-            if(matcher.find()){
+            if(matcher.matches()){
                 String g1 = "";
                 String g2 = bonText;
                 int groups = matcher.groupCount();
@@ -90,7 +90,7 @@ public class TragetFragmentCutterByRegex implements TargetFragmentCutter{
         RegexConfiguration regexConfiguration = (RegexConfiguration) especificConfigurator;
         Pattern patternEnd = RegexBuilder.getInstance(regexConfiguration, parserModel).buildRegex("fragment_end_detector");
         Matcher matcher = patternEnd.matcher(text);
-        if(matcher.find()){
+        if(matcher.matches()){
             int groups = matcher.groupCount();
             boolean found = groups==1 || groups==2;
             switch (groups) {
