@@ -126,7 +126,8 @@ public class OpenaiExtractorParser<E extends ExtractedData> extends AbstractExtr
             params.put("config_json", configJson);
             MutableNewsExtractedData parseddata = null;
             try {
-                JSONObject resp = new JSONObject(caller.sendPostAsFormatParams("pr/extract_with_openai", "python", params, challenge, signedData, String.class, false));
+                boolean rep = challenge==null || signedData==null;
+                JSONObject resp = new JSONObject(caller.sendPostAsFormatParams("pr/extract_with_openai", "python", params, challenge, signedData, String.class, rep));
                 if(resp.getInt("status")==0){
                     parseddata = parseDataFromAiJson(resp.getJSONObject("content"), partialExtractedDataToCopy, lastData);
                 }else{
