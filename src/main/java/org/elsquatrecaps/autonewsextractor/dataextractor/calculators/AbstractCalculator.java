@@ -50,7 +50,7 @@ public abstract class AbstractCalculator<R> implements AutoNewsExtractorCalculat
     
     protected boolean isEmptyParam(Object param){
         boolean ret = param == null;
-        if(ret && param instanceof String){
+        if(!ret && param instanceof String){
             ret = ((String)param).isEmpty() || ((String)param).isBlank();
         }
         return ret;
