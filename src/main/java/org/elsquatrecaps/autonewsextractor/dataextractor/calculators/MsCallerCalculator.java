@@ -27,7 +27,12 @@ public class MsCallerCalculator extends AbstractCalculator<Object> {
  @Override
     public void init(Object obj){
         if(obj instanceof JSONObject && ((JSONObject)obj).has("context")){
-            String propertiesPath = ((JSONObject)obj).getString("microservice_initializer_file");
+            String propertiesPath;
+            if(((JSONObject)obj).has("microservice_initializer_file")){
+                propertiesPath = ((JSONObject)obj).getString("microservice_initializer_file");
+            }else{
+                propertiesPath = "/etc/.portada_microservices/ms_init.properties";
+            }
             Properties ms_properties = new Properties();
             try(FileReader fr = new FileReader(propertiesPath)){
                 ms_properties.load(fr);
