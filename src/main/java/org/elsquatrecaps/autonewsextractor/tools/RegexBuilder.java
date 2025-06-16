@@ -141,14 +141,16 @@ public class RegexBuilder {
                 String prevLine=null;
                 int lines = 0;
                 while ((currentLine = br.readLine()) != null){
-                    if(lines>1){
-                        contentBuilder.append("|");
-                    }
-                    if(lines>0){
-                        contentBuilder.append("(?:").append(prevLine).append(")");
-                    }
-                    ++lines;
+                    if(!currentLine.isEmpty()){
+                        if(lines>1){
+                            contentBuilder.append("|");
+                        }
+                        if(lines>0){
+                            contentBuilder.append("(?:").append(prevLine).append(")");
+                        }
+                        ++lines;
                     prevLine = currentLine;
+                    }
                 }
                 if(lines==1){
                      contentBuilder.append(prevLine);
