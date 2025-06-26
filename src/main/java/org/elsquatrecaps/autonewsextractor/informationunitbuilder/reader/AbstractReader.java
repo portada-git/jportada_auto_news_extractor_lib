@@ -43,7 +43,7 @@ public abstract class AbstractReader implements FactReader{
         return bonText.toString();
     }
 
-    protected void appendText(StringBuilder bonText, String pt){
+    public void appendText(StringBuilder bonText, String pt){
         Pattern pattern = Pattern.compile("^.*\\.\\s*$", Pattern.DOTALL);
         Matcher matcherBt = pattern.matcher(bonText.toString());
         pattern = Pattern.compile("^\\s*[A-ZÁÀÉÈÍÌÓÒÚÙÄËÏÖÜÑÇ](.*)$", Pattern.DOTALL);
@@ -62,8 +62,13 @@ public abstract class AbstractReader implements FactReader{
     
 //    protected abstract void saveDataFromText(String bonText, Date date);
     
-    protected String file2Text(String file){
+    public String file2Text(String file){
         String ret = this.prepareTextFromFile(file, getOriginDir());
+        return ret;
+    }    
+    
+    public String file2Text(String file, String originDir){
+        String ret = this.prepareTextFromFile(file, originDir);
         return ret;
     }    
     

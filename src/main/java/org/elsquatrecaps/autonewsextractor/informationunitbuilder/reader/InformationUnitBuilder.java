@@ -18,7 +18,7 @@ public interface InformationUnitBuilder extends FactReader{
     void createAndProcessEachInformationUnitText(Callback<InformationUnitDataParamsFromTextsForCallback, Void> callbak, PublicationInfo publicationInfo, String... text);
     void createAndProcessEachInformationUnitFiles(Callback<InformationUnitDataParamsFromFilesForCallback, Void> callbak, PublicationInfo publicationInfo);
 //    JSONArray getAllInformationUnitAsJson();
-    
+   
     interface InformationUnitDataParamsForCallback{
         PublicationInfo getPublicationInfo();
         String getInfomationUnitName();
