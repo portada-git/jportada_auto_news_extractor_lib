@@ -75,7 +75,7 @@ public class RegexExtractorParser<E extends ExtractedData> extends AbstractExtra
         for(int inc=0; !found && inc<maxGroups; inc+=fieldsToExtract.length()){
             for(int i=0; i<fieldsToExtract.length(); i++){
                 if(matcher.group(i+1+inc)!=null){
-                    parseddata.set(fieldsToExtract.getJSONObject(i).getString("key"), matcher.group(i+1+inc).trim());
+                    parseddata.set(fieldsToExtract.getJSONObject(i).getString("key"), matcher.group(i+1+inc).trim(), true);
                     found=true;
                 }
             }

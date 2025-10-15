@@ -26,20 +26,32 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
     }
 
     public void set(String field, JSONObject value){
-        _set(field, value);
+        set(field, value, false);
+    }
+    
+    public void set(String field, JSONObject value, boolean notDelete){
+        _set(field, value, notDelete);
     }
     
     public void set(String field, JSONArray value){
-        _set(field, value);
+        set(field, value, false);
+    }
+    
+    public void set(String field, JSONArray value, boolean notDelete){
+        _set(field, value, notDelete);
     }
     
     public void set(String field, String value){
-        _set(field, value);
+        set(field, value, false);
     }
     
-    private void _set(String field, Object value){
+    public void set(String field, String value, boolean notDelete){
+        _set(field, value, notDelete);
+    }
+    
+    private void _set(String field, Object value, boolean notDelete){
         if(isJsonStructuredField(field)){
-            _setOriginalValue(field, value);
+            _setOriginalValue(field, value, notDelete);
         }else{
             extractedData.put(field, value);
         }
@@ -58,8 +70,12 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
     }
     
     private void _setOriginalValue(String field, Object value){
+        _setOriginalValue(field, value, false);
+    }
+    
+    private void _setOriginalValue(String field, Object value, boolean setIfEmpty){
         JSONObject obj;
-        if(hasValue(value)){
+        if(hasValue(value) || (setIfEmpty && value!=null)){
             if(isJsonStructuredField(field)){
                 obj = extractedData.getJSONObject(field);
             }else{
@@ -128,7 +144,7 @@ public class MutableNewsExtractedData extends ImmutableNewsExtractedData impleme
                 obj = extractedData.getJSONObject(field);
             }else{
                 if(extractedData.has(field)){
-                    _setOriginalValue(field, extractedData.get(field));
+                    _setOriginalValue(field, extractedData.get(field), true);
                     obj = extractedData.getJSONObject(field);
                 }else{
                     obj = new JSONObject();
