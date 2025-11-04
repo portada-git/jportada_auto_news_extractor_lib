@@ -51,6 +51,14 @@ public class OpenaiExtractorParser<E extends ExtractedData> extends AbstractExtr
         this.configJson.put("ai_instructions", jsonConfig.getJSONObject("ai_instructions"));
         this.configJson.put("model", jsonConfig.getString("model"));
         this.configJson.put("model_config", jsonConfig.getJSONObject("model_config"));
+        if(jsonConfig.has("api")){
+            this.configJson.put("api", jsonConfig.getString("api"));
+
+        }
+        if(jsonConfig.has("api_key")){
+            this.configJson.put("api_key", jsonConfig.getString("api_key"));
+
+        }
         this.parseByParagraphs = jsonConfig.optBoolean("parse_by_paragraphs", false);
         this.saveParsedData = jsonConfig.optBoolean("save_parsed_data", false);
         Properties ms_properties = new Properties();
@@ -137,6 +145,7 @@ public class OpenaiExtractorParser<E extends ExtractedData> extends AbstractExtr
                 if(this.saveParsedData){
                     parseddata.setParsedText(text);
                 }
+                printForDebbuging(text, "", parseddata, fieldsToAssign, fieldsToCalculate);
             } catch (PortadaMicroserviceCallException ex) {
                 Logger.getLogger(OpenaiExtractorParser.class.getName()).log(Level.SEVERE, null, ex);
                 //Generate error
@@ -166,4 +175,27 @@ public class OpenaiExtractorParser<E extends ExtractedData> extends AbstractExtr
     @Override
     public void updateDefaultData(MutableNewsExtractedData mutableExtractedData) {
     }    
+    
+    @Override
+    protected String parseddataToStringForDebugging(MutableNewsExtractedData parseddata, JSONArray fieldsToExtract, JSONArray fieldsToCalculate){
+        StringBuilder strb = new StringBuilder();
+        strb.append("Extracted data:\n");
+        strb.append("\t -Original field values:\n");
+        for(int i=0; i<fieldsToExtract.length(); i++){
+            strb.append("\t\t --");
+            strb.append(fieldsToExtract.getJSONObject(i).getString("target"));
+            strb.append(": ");
+            strb.append(parseddata.getOriginalValue(fieldsToExtract.getJSONObject(i).getString("target")));
+            strb.append("\n");
+        }
+        strb.append("\t -Calculated field values:\n");
+        for(int i=0; i<fieldsToCalculate.length(); i++){
+            strb.append("\t\t --");
+            strb.append(fieldsToCalculate.getJSONObject(i).getString("key"));
+            strb.append(": ");
+            strb.append(parseddata.getCalculatedValue(fieldsToCalculate.getJSONObject(i).getString("key")));
+            strb.append("\n");
+        }
+        return strb.toString();
+    }
 }

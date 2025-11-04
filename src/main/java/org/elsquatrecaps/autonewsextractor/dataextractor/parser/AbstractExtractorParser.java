@@ -5,7 +5,10 @@
 package org.elsquatrecaps.autonewsextractor.dataextractor.parser;
 
 import org.elsquatrecaps.autonewsextractor.model.ExtractedData;
+import org.elsquatrecaps.autonewsextractor.model.MutableNewsExtractedData;
 import org.elsquatrecaps.utilities.tools.configuration.Configuration;
+import org.elsquatrecaps.utilities.tools.configuration.DevelopmentConfiguration;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -45,8 +48,39 @@ public abstract class AbstractExtractorParser<E extends ExtractedData> implement
 
     protected abstract void initJsonCOnfig(JSONObject jsonConfig);
     
+    @Override
     public boolean needSecurityConfig(){
         return false;
     }
     
+    protected void printForDebbuging(String textParsed, String textUnparsed, MutableNewsExtractedData parseddata, JSONArray fieldsToExtract, JSONArray fieldsToCalculate){
+        if(configuration instanceof DevelopmentConfiguration && ((DevelopmentConfiguration)configuration).getRunForDebugging()){
+            System.out.println(String.format("Parsed text: \"%s\"\n\n--------------\n", textParsed));
+            System.out.println(String.format("Unparsed text: \"%s\"\n\n--------------\n", textUnparsed));
+            System.out.println(parseddataToStringForDebugging(parseddata, fieldsToExtract, fieldsToCalculate));
+            System.out.println("\n\n--------------\n");
+        }        
+    }
+    
+    protected String parseddataToStringForDebugging(MutableNewsExtractedData parseddata, JSONArray fieldsToExtract, JSONArray fieldsToCalculate){
+        StringBuilder strb = new StringBuilder();
+        strb.append("Extracted data:\n");
+        strb.append("\t -Original field values:\n");
+        for(int i=0; i<fieldsToExtract.length(); i++){
+            strb.append("\t\t --");
+            strb.append(fieldsToExtract.getJSONObject(i).getString("key"));
+            strb.append(": ");
+            strb.append(parseddata.getOriginalValue(fieldsToExtract.getJSONObject(i).getString("key")));
+            strb.append("\n");
+        }
+        strb.append("\t -Calculated field values:\n");
+        for(int i=0; i<fieldsToCalculate.length(); i++){
+            strb.append("\t\t --");
+            strb.append(fieldsToCalculate.getJSONObject(i).getString("key"));
+            strb.append(": ");
+            strb.append(parseddata.getCalculatedValue(fieldsToCalculate.getJSONObject(i).getString("key")));
+            strb.append("\n");
+        }
+        return strb.toString();
+    }    
 }

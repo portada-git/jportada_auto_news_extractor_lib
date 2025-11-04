@@ -123,7 +123,7 @@ public class RegexExtractorParser<E extends ExtractedData> extends AbstractExtra
             parseddata.setParsedText(textParsed);
             parseddata.setUnparsedText(textUnparsed);
             ret.add((E) parseddata);
-            printForDebbuging(textParsed, textUnparsed, parseddata);
+            printForDebbuging(textParsed, textUnparsed, parseddata, fieldsToExtract, fieldsToCalculate);
             for(int i=0; i<fieldsToExtract.length(); i++){
                 if(!fieldsToExtract.getJSONObject(i).has("copy_last_value") || fieldsToExtract.getJSONObject(i).getBoolean("copy_last_value")){
                     partialExtractedDataToCopy.setCalculateValue(
@@ -142,42 +142,11 @@ public class RegexExtractorParser<E extends ExtractedData> extends AbstractExtra
             parseddata.setParsedText(textParsed);
             parseddata.setUnparsedText(textUnparsed);
             ret.add((E) parseddata);
-            printForDebbuging(textParsed, textUnparsed, parseddata);
+            printForDebbuging(textParsed, textUnparsed, parseddata, fieldsToExtract, fieldsToCalculate);
         }
         return ret;
     }
 
-    private void printForDebbuging(String textParsed, String textUnparsed, MutableNewsExtractedData parseddata){
-        if(configuration instanceof DevelopmentConfiguration && ((DevelopmentConfiguration)configuration).getRunForDebugging()){
-            System.out.println(String.format("Parsed text: \"%s\"\n\n--------------\n", textParsed));
-            System.out.println(String.format("Unparsed text: \"%s\"\n\n--------------\n", textUnparsed));
-            System.out.println(parseddataToStringForDebugging(parseddata));
-            System.out.println("\n\n--------------\n");
-        }        
-    }
-    
-    private String parseddataToStringForDebugging(MutableNewsExtractedData parseddata){
-        StringBuilder strb = new StringBuilder();
-        strb.append("Extracted data:\n");
-        strb.append("\t -Original field values:\n");
-        for(int i=0; i<fieldsToExtract.length(); i++){
-            strb.append("\t\t --");
-            strb.append(fieldsToExtract.getJSONObject(i).getString("key"));
-            strb.append(": ");
-            strb.append(parseddata.getOriginalValue(fieldsToExtract.getJSONObject(i).getString("key")));
-            strb.append("\n");
-        }
-        strb.append("\t -Calculated field values:\n");
-        for(int i=0; i<fieldsToCalculate.length(); i++){
-            strb.append("\t\t --");
-            strb.append(fieldsToCalculate.getJSONObject(i).getString("key"));
-            strb.append(": ");
-            strb.append(parseddata.getCalculatedValue(fieldsToCalculate.getJSONObject(i).getString("key")));
-            strb.append("\n");
-        }
-        return strb.toString();
-    }
-    
     @Override
     public MutableNewsExtractedData getDefaultData(ImmutableNewsExtractedData defData) {
         MutableNewsExtractedData ret = new MutableNewsExtractedData(defData);
