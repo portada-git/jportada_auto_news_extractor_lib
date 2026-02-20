@@ -349,6 +349,7 @@ public class GenericCsvFileFormatter<T extends MutableNewsExtractedData> impleme
         StringBuilder stb = new StringBuilder();
         if(!isAppendFile()){
             stb.append(getCsvHeader());
+            stb.append("\n");
         }
         for(T fact: this.getList()){
             stb.append(this.factToFactDataAsString(fact).getRow());
