@@ -290,9 +290,13 @@ public class InformationUnitBuilderFromSdlFiles extends AbstractReader implement
             Pattern pattern;
             RegexConfiguration regexConfiguration = especificConfigurator==null?null:(RegexConfiguration) especificConfigurator; 
             if(regexConfiguration!=null){
-                File rb = new File(regexConfiguration.getRegexBasePath());
-                if(rb.exists() && rb.isDirectory()){
-                    pattern = RegexBuilder.getInstance(regexConfiguration).buildRegex(regex_name);                    
+                if (regexConfiguration.getRegexBasePath()!=null){
+                    File rb = new File(regexConfiguration.getRegexBasePath());
+                    if(rb.exists() && rb.isDirectory()){
+                        pattern = RegexBuilder.getInstance(regexConfiguration).buildRegex(regex_name);                    
+                    }else{
+                        pattern = patternIsPage;
+                    }
                 }else{
                     pattern = patternIsPage;
                 }
